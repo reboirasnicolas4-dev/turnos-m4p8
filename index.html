@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Médicos · Alas de Libertad</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#16120e;--card:#211b15;--card2:#2b241d;--line:#3a3027;--ink:#f0e8da;--mut:#b3a99b;--acc:#f7a823;--accx:#281a08;--soft:#3a2a12;--ok:#8fd19e;--blue:#8db4ff;--red:#ff8f7a}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system-ui,sans-serif}
+.app{max-width:560px;margin:0 auto;padding:16px 14px 110px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.logo{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 60% 40%,#ffb43a,#e2531c 60%,#2a1206 62%);flex:none}
+.top h1{font:700 26px Fraunces,serif;margin:0;line-height:1}.top small{display:block;color:var(--mut);font-size:12.5px;margin-top:3px}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.res button{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 10px;text-align:left;color:var(--ink);font:inherit;cursor:pointer}
+.res b{font:700 22px Fraunces,serif;display:block}.res span{font-size:12px;color:var(--mut)}
+.res button.w{border-color:var(--acc)}.res button.w b{color:var(--acc)}.res button.on{background:var(--soft);border-color:var(--acc)}
+.alerta{background:var(--soft);border:1px solid var(--acc);border-radius:14px;padding:10px 12px;margin-bottom:12px;font-size:14px}
+.alerta b{color:var(--acc)}
+.nota{border:1px dashed var(--line);border-radius:12px;padding:9px 12px;color:var(--mut);font-size:13.5px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--mut);font:600 14.5px inherit;cursor:pointer}
+.tabs button.on{background:var(--acc);color:var(--accx);border-color:var(--acc)}
+.srch{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 12px;margin-bottom:12px}
+.srch input{flex:1;background:none;border:0;color:var(--ink);font:inherit;outline:none;padding:11px 0}
+.filtro{display:flex;align-items:center;justify-content:space-between;color:var(--acc);font-size:13.5px;margin:-4px 2px 10px}
+.filtro button{background:none;border:0;color:var(--mut);font:inherit;text-decoration:underline;cursor:pointer}
+.grp{font-size:11.5px;font-weight:700;letter-spacing:.07em;color:var(--mut);margin:14px 2px 6px;text-transform:uppercase}
+.t{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin-bottom:8px;cursor:pointer;align-items:center}
+.t.urg{border-color:var(--acc);background:linear-gradient(90deg,#2e2214,var(--card) 60%)}
+.t.viejo{border-style:dashed}
+.d{width:52px;flex:none;text-align:center;background:var(--card2);border-radius:12px;padding:6px 0}
+.d small{display:block;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}.d b{font:700 22px Fraunces,serif;display:block;line-height:1.1}
+.t .i{flex:1;min-width:0}.t .n{font-weight:700;font-size:16px}.t .s{color:var(--mut);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.chip{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--card2);border:1px solid var(--line);color:var(--mut)}
+.chip.sin{color:var(--acc);border-color:#6a4a16}.chip.pedido{color:var(--blue);border-color:#33405a}.chip.recibido{color:var(--ok);border-color:#2f4a35}
+.chip.hoy{background:var(--acc);color:var(--accx);border-color:var(--acc);font-weight:700}.chip.pron{color:var(--ink)}
+.chip.fue{color:var(--ok)}.chip.nofue{color:var(--red)}
+.vacio{text-align:center;color:var(--mut);padding:30px 10px}
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;width:min(532px,calc(100% - 28px));padding:15px;border-radius:16px;border:0;background:var(--acc);color:var(--accx);font:700 16px inherit;cursor:pointer;box-shadow:0 10px 30px #0009;z-index:3}
+.sheet{position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;z-index:9}.sheet.on{display:flex}
+.sh{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;padding:18px 16px 26px;border-top:1px solid var(--line)}
+.sh h2{margin:0 0 2px;font:700 22px Fraunces,serif}.sh .sub{color:var(--mut);margin:0 0 14px;font-size:14px}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--mut);text-transform:uppercase;margin:14px 0 6px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.f{display:block;margin-bottom:10px}.f span{display:block;font-size:13px;color:var(--mut);margin-bottom:4px}
+.f input,.f textarea{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font:inherit;padding:11px 12px;outline:none;color-scheme:dark}
+.f input:focus,.f textarea:focus{border-color:var(--acc)}.f textarea{min-height:70px;resize:vertical}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns.c3{grid-template-columns:repeat(3,1fr)}
+.b{background:var(--card2);border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px 8px;font:600 14px inherit;cursor:pointer;text-align:center;text-decoration:none;display:block}
+.b.p{background:var(--acc);color:var(--accx);border-color:var(--acc)}.b.sel{outline:2px solid var(--acc);background:var(--soft)}
+.b.full{grid-column:1/-1}.b.red{color:var(--red)}
+.info{background:var(--card2);border-radius:14px;padding:4px 12px}.info div{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14.5px}.info div:last-child{border:0}
+.info i{font-style:normal;width:22px;flex:none}.info span{color:var(--mut);width:88px;flex:none}
+.msg{background:#122016;border:1px solid #2f4a35;border-radius:14px;padding:12px;font-size:14.5px;white-space:pre-wrap;margin-bottom:8px}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#f0e8da;color:#1b140d;padding:10px 16px;border-radius:12px;font-weight:600;z-index:20;display:none;max-width:90%}
+.ic{background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--mut);padding:8px 11px;font:600 14px inherit;cursor:pointer}
+.login{max-width:380px;margin:0 auto;padding:60px 18px;text-align:center}.login h1{font:700 30px Fraunces,serif;margin:0}.login>p{color:var(--mut);margin:4px 0 24px}
+.login form{text-align:left}.lerr{color:var(--red);min-height:20px;font-size:14px;margin:2px 0 10px}.lnota{color:var(--mut);font-size:13px;margin-top:14px}
+</style>
+<meta name="theme-color" content="#16120e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Médicos"></head><body>
+<div id="login" class="login" hidden><div class="logo" style="width:64px;height:64px;margin:0 auto 14px"></div>
+ <h1>Médicos</h1><p>Alas de Libertad · turnos y viáticos</p>
+ <form id="lform"><label class="f"><span>Correo</span><input id="lcorreo" type="email" autocomplete="username" placeholder="tucorreo@gmail.com"></label>
+ <label class="f"><span>Contraseña</span><input id="lclave" type="password" autocomplete="current-password"></label>
+ <div id="lerr" class="lerr"></div><button class="b p" id="lbtn" style="width:100%">Entrar</button>
+ <p class="lnota">La primera vez que entrás, la contraseña que escribas queda como la tuya. Si tu correo no tiene acceso, pedile a un Admin que te agregue.</p></form></div>
+<div class="app">
+ <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small></div><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
+ <div id="nota" class="nota" hidden></div>
+ <div class="res" id="res"></div>
+ <div id="alerta"></div>
+ <div class="tabs"><button data-tab="prox" class="on">Próximos</button><button data-tab="pas">Ya fueron</button></div>
+ <div class="srch">🔍<input id="q" placeholder="Buscar interno o lugar…"></div>
+ <div id="filtro"></div>
+ <div id="lista"></div>
+</div>
+<button class="fab" id="nuevo">＋ Anotar turno</button>
+<div class="sheet" id="sheet"><div class="sh" id="sh"></div></div>
+<datalist id="dl-int"></datalist><datalist id="dl-lug"></datalist>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"],MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const VIA={sin:"💸 Falta pedir",pedido:"⏳ Pedido a la familia",recibido:"✅ Plata recibida",no:"No precisa"};
+const S={list:[],tab:"prox",filtro:null,q:"",internos:[],rol:""};
+// ⬇⬇ PEGÁ ACÁ ENTRE LAS COMILLAS LA URL DE TU APPS SCRIPT (termina en /exec) ⬇⬇
+const API="https://script.google.com/macros/s/AKfycbzYithfRv1aTYL1CrPeYHpAcq7XccGY3Gm7Bvlb56aCn65ZlT-FS7a6ePZ7-OumAz5LRw/exec";
+const esta=n=>!S.internos.length||S.internos.some(x=>x.toLowerCase()===(n||"").toLowerCase());
+let cred=null,cargando=false;
+const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch{return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}},del(k){try{localStorage.removeItem(k)}catch{}}};
+
+function hoy0(){const d=new Date();d.setHours(0,0,0,0);return d}
+function pf(f){const [y,m,d]=(f||"").split("-").map(Number);return y?new Date(y,m-1,d):null}
+function dias(f){const d=pf(f);return d?Math.round((d-hoy0())/864e5):999}
+function rel(n){return n===0?"Hoy":n===1?"Mañana":n>1&&n<7?`En ${n} días`:n<0?"Ya pasó":""}
+function fLarga(t){const d=pf(t.fecha);if(!d)return"";return `${DIAS[d.getDay()]} ${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`}
+function plata(m){return m?"$ "+Number(m).toLocaleString("es-UY"):""}
+function urg(t){return t.estado==="pendiente"&&t.viatico==="sin"&&dias(t.fecha)>=0&&dias(t.fecha)<=3}
+function toast(m){const e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2600)}
+function nota(m){const e=$("nota");if(m){e.textContent=m;e.hidden=false}else e.hidden=true}
+
+function render(){
+ const pend=S.list.filter(t=>t.estado==="pendiente");
+ const sem=pend.filter(t=>{const d=dias(t.fecha);return d>=0&&d<=7}).length;
+ const porPedir=pend.filter(t=>t.viatico==="sin"&&dias(t.fecha)>=0).length;
+ const esperando=pend.filter(t=>t.viatico==="pedido").length;
+ $("res").innerHTML=`<button data-f="sem" class="${S.filtro==="sem"?"on":""}"><b>${sem}</b><span>esta semana</span></button>
+  <button data-f="sin" class="${porPedir?"w":""} ${S.filtro==="sin"?"on":""}"><b>${porPedir}</b><span>viáticos por pedir</span></button>
+  <button data-f="pedido" class="${S.filtro==="pedido"?"on":""}"><b>${esperando}</b><span>esperando la plata</span></button>`;
+ const u=pend.filter(urg).sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+ $("alerta").innerHTML=u.length?`<div class="alerta">⚠️ ${u.map(t=>`<b>${esc(t.interno)}</b> tiene médico ${rel(dias(t.fecha)).toLowerCase()}`).join(", ")} y <b>todavía no se pidieron los viáticos</b>.</div>`:"";
+ document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));
+ $("filtro").innerHTML=S.filtro?`<div class="filtro"><span>Mostrando: ${{sem:"esta semana",sin:"viáticos por pedir",pedido:"esperando la plata"}[S.filtro]}</span><button id="qf">Ver todos</button></div>`:"";
+ let L=S.tab==="prox"?pend:S.list.filter(t=>t.estado!=="pendiente");
+ if(S.tab==="prox"&&S.filtro){L=L.filter(t=>S.filtro==="sem"?dias(t.fecha)>=0&&dias(t.fecha)<=7:S.filtro==="sin"?t.viatico==="sin"&&dias(t.fecha)>=0:t.viatico==="pedido")}
+ const q=S.q.trim().toLowerCase();if(q)L=L.filter(t=>(t.interno+" "+t.lugar+" "+(t.especialidad||"")).toLowerCase().includes(q));
+ L=[...L].sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));if(S.tab==="pas")L.reverse();
+ if(!L.length){$("lista").innerHTML=`<div class="vacio">${S.list.length?"No hay turnos acá.":"Todavía no hay turnos anotados.<br>Tocá <b>＋ Anotar turno</b> para empezar."}</div>`}
+ else{
+  let html="",g="";
+  for(const t of L){const n=dias(t.fecha);let gg;
+   if(S.tab==="pas")gg="";else gg=n<0?"Sin cerrar · ¿fue al médico?":n<=0?"Hoy":n===1?"Mañana":n<=7?"Esta semana":"Más adelante";
+   if(gg!==g){html+=gg?`<div class="grp">${gg}</div>`:"";g=gg}
+   const d=pf(t.fecha);
+   html+=`<div class="t${urg(t)?" urg":""}${S.tab==="prox"&&n<0?" viejo":""}" data-id="${esc(t.id)}">
+    <div class="d"><small>${d?DIAS[d.getDay()].slice(0,3):""}</small><b>${d?d.getDate():"?"}</b><small>${d?MES[d.getMonth()]:""}</small></div>
+    <div class="i"><div class="n">${esc(t.interno)}</div><div class="s">🕒 ${esc(t.hora||"--:--")} · 📍 ${esc(t.lugar||"sin lugar")}${t.especialidad?" · "+esc(t.especialidad):""}</div>
+    <div class="chips">${S.tab==="prox"&&n>=0&&n<=1?`<span class="chip hoy">${rel(n)}</span>`:S.tab==="prox"&&n>1&&n<7?`<span class="chip pron">${rel(n)}</span>`:""}
+     ${t.estado==="pendiente"&&!esta(t.interno)?'<span class="chip nofue">Ya no está en la comunidad</span>':""}
+     ${t.estado==="fue"?'<span class="chip fue">✔ Fue</span>':t.estado==="nofue"?'<span class="chip nofue">✖ No fue</span>':""}
+     ${t.viatico!=="no"?`<span class="chip ${t.viatico}">${VIA[t.viatico]||""}${t.monto?" · "+plata(t.monto):""}</span>`:""}</div></div></div>`}
+  $("lista").innerHTML=html}
+ const ints=[...new Set([...S.internos,...S.list.map(t=>t.interno)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es")),lugs=[...new Set(["Ciudad del Plata","San José de Mayo","Montevideo","Libertad",...S.list.map(t=>t.lugar).filter(Boolean)])];
+ $("dl-int").innerHTML=ints.map(x=>`<option value="${esc(x)}">`).join("");$("dl-lug").innerHTML=lugs.map(x=>`<option value="${esc(x)}">`).join("");
+}
+
+function abrir(h){$("sh").innerHTML=h;$("sheet").classList.add("on");$("sh").scrollTop=0}
+function cerrar(){$("sheet").classList.remove("on")}
+const get=id=>S.list.find(t=>t.id===id);
+
+
+function detalle(id){const t=get(id);if(!t)return cerrar();const n=dias(t.fecha);
+ abrir(`<h2>${esc(t.interno)}</h2><p class="sub">${esc(fLarga(t))} · ${esc(t.hora||"--:--")}${t.estado==="pendiente"&&rel(n)?" · "+rel(n):""}</p>
+ <div class="info">
+  <div><i>📍</i><span>Dónde</span>${esc(t.lugar||"—")}</div>
+  ${t.especialidad?`<div><i>🩺</i><span>Médico</span>${esc(t.especialidad)}</div>`:""}
+  ${t.acompana?`<div><i>🧑‍🤝‍🧑</i><span>Lo lleva</span>${esc(t.acompana)}</div>`:""}
+  <div><i>👪</i><span>Se le pidió a</span>${esc(t.familia||"—")}${t.telefono?" · "+esc(t.telefono):""}</div>
+  <div><i>💵</i><span>Viáticos</span>${t.monto?plata(t.monto):"sin monto"}</div>
+  ${t.notas?`<div><i>📝</i><span>Notas</span>${esc(t.notas)}</div>`:""}
+ </div>
+ <div class="lbl">Viáticos</div>
+ <div class="btns">${["sin","pedido","recibido","no"].map(v=>`<button class="b${t.viatico===v?" sel":""}" data-via="${v}">${VIA[v]}</button>`).join("")}</div>
+ <div class="lbl">¿Cómo salió?</div>
+ <div class="btns">${t.estado==="pendiente"?`<button class="b" data-est="fue">✔ Fue al médico</button><button class="b" data-est="nofue">✖ No fue</button>`:`<button class="b full" data-est="pendiente">↩ Volver a próximos</button>`}</div>
+ <div class="lbl">Más</div>
+ <div class="btns"><button class="b" data-act="editar">✏️ Cambiar datos / fecha</button>${S.rol==="Admin"?'<button class="b red" data-act="borrar">🗑 Borrar turno</button>':""}<button class="b full" data-act="cerrar">Cerrar</button></div>`);
+ $("sh").dataset.id=id}
+
+function form(t){const e=t||{viatico:"sin"};
+ abrir(`<h2>${t?"Cambiar turno":"Anotar turno"}</h2><p class="sub">Lo que es obligatorio: interno y fecha.</p>
+ <form id="fm">
+ <label class="f"><span>Interno</span><input id="f_interno" list="dl-int" value="${esc(e.interno)}" placeholder="Escribí y elegí de la lista" autocomplete="off" required><small style="display:block;color:var(--mut);font-size:12px;margin-top:4px">${S.internos.length} internos, tomados de la app de Internos. Si es uno nuevo, escribilo igual.</small></label>
+ <div class="row"><label class="f"><span>Fecha</span><input type="date" id="f_fecha" value="${esc(e.fecha)}" required></label><label class="f"><span>Hora</span><input type="time" id="f_hora" value="${esc(e.hora)}"></label></div>
+ <label class="f"><span>Dónde (ciudad / policlínica)</span><input id="f_lugar" list="dl-lug" value="${esc(e.lugar)}" placeholder="Ej: Ciudad del Plata"></label>
+ <label class="f"><span>Médico o especialidad (opcional)</span><input id="f_esp" value="${esc(e.especialidad)}" placeholder="Ej: psiquiatra, dentista…"></label>
+ <label class="f"><span>Quién lo lleva (opcional)</span><input id="f_acomp" value="${esc(e.acompana)}" placeholder="Ej: Nico"></label>
+ <div class="lbl">Viáticos</div>
+ <div class="row"><label class="f"><span>Monto de los pasajes</span><input id="f_monto" inputmode="numeric" value="${esc(e.monto)}" placeholder="$"></label><label class="f"><span>Teléfono de la familia</span><input id="f_tel" inputmode="tel" value="${esc(e.telefono)}" placeholder="09…"></label></div>
+ <label class="f"><span>Familiar con quien se habló</span><input id="f_fam" value="${esc(e.familia)}" placeholder="Ej: María (madre)"></label>
+ <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="f_nov" ${e.viatico==="no"?"checked":""} style="width:auto"><span style="margin:0">No precisa viáticos</span></label>
+ <label class="f"><span>Notas (opcional)</span><textarea id="f_notas" placeholder="Ej: ir en ayunas, llevar carné…">${esc(e.notas)}</textarea></label>
+ <div class="btns"><button type="button" class="b" data-act="${t?"volver":"cerrar"}">Cancelar</button><button class="b p" type="submit">Guardar</button></div>
+ </form>`);
+ $("sh").dataset.id=t?t.id:"";
+ $("f_interno").addEventListener("change",()=>{if(t)return;const v=$("f_interno").value.trim().toLowerCase();const prev=[...S.list].reverse().find(x=>(x.interno||"").toLowerCase()===v);
+  if(prev){if(!$("f_fam").value)$("f_fam").value=prev.familia||"";if(!$("f_tel").value)$("f_tel").value=prev.telefono||""}});
+ $("fm").addEventListener("submit",async ev=>{ev.preventDefault();
+  const body={interno:$("f_interno").value.trim(),fecha:$("f_fecha").value,hora:$("f_hora").value,lugar:$("f_lugar").value.trim(),especialidad:$("f_esp").value.trim(),acompana:$("f_acomp").value.trim(),
+   monto:$("f_monto").value.replace(/\D/g,""),telefono:$("f_tel").value.trim(),familia:$("f_fam").value.trim(),notas:$("f_notas").value.trim(),
+   viatico:$("f_nov").checked?"no":(e.viatico==="no"?"sin":e.viatico||"sin"),estado:e.estado||"pendiente",creado:e.creado||new Date().toISOString()};
+  if(!body.interno||!body.fecha){toast("Falta el interno o la fecha");return}
+  const id=await guardar(t?t.id:null,body);
+  if(id){toast(t?"Turno actualizado":"Turno anotado ✔");detalle(id)}})}
+
+async function api(accion,extra){
+ if(!API||API.indexOf("http")!==0)throw new Error("Falta poner la URL del Apps Script en el archivo.");
+ const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({accion,correo:cred&&cred.correo,clave:cred&&cred.clave},extra||{}))});
+ return r.json()}
+async function cargar(silencioso){
+ if(!cred||cargando)return;cargando=true;
+ try{const r=await api("listar");
+  if(!r.ok){if(/contraseña|acceso/i.test(r.error||"")){salir();$("lerr").textContent=r.error}else nota(r.error);return}
+  S.list=r.turnos||[];S.rol=r.rol;if(Array.isArray(r.internos)){S.internos=r.internos;ls.set("med_int",r.internos)}
+  nota("");render();
+  const id=$("sh").dataset.id;if($("sheet").classList.contains("on")&&id&&!document.getElementById("fm")){if(get(id))detalle(id);else cerrar()}
+ }catch(e){if(!silencioso)nota("No se pudo conectar. Revisá internet y tocá ⟳ para reintentar.")}
+ finally{cargando=false}}
+async function guardar(id,body){
+ const btn=document.querySelector("#fm button[type=submit]");if(btn){btn.disabled=true;btn.textContent="Guardando…"}
+ try{const r=await api("guardar",{turno:Object.assign({},body,{id:id||""})});
+  if(!r.ok){toast(r.error||"No se pudo guardar");return null}
+  const o=Object.assign({},body,{id:r.id});const k=S.list.findIndex(x=>x.id===r.id);k<0?S.list.push(o):S.list[k]=o;render();cargar(true);return r.id}
+ catch(e){toast("No se pudo guardar. Revisá internet.");return null}
+ finally{if(btn){btn.disabled=false;btn.textContent="Guardar"}}}
+async function cambiar(id,campos){const t=get(id);if(!t)return;
+ const prev=Object.assign({},t);Object.assign(t,campos);render();detalle(id);
+ const ok=await guardar(id,t);if(!ok){Object.assign(t,prev);render();detalle(id)}}
+async function borrar(id){
+ try{const r=await api("borrar",{id});if(!r.ok){toast(r.error||"No se pudo borrar");return}
+  S.list=S.list.filter(t=>t.id!==id);render();cerrar();toast("Turno borrado")}catch(e){toast("No se pudo borrar. Revisá internet.")}}
+
+/* ---------- Entrar / salir ---------- */
+function pantallaLogin(on){$("login").hidden=!on;document.querySelector(".app").hidden=on;$("nuevo").hidden=on}
+function salir(){cred=null;ls.del("med_cred");S.list=[];pantallaLogin(true)}
+$("lform").addEventListener("submit",async ev=>{ev.preventDefault();
+ const correo=$("lcorreo").value.trim().toLowerCase(),clave=$("lclave").value;$("lerr").textContent="";
+ if(!correo||!clave){$("lerr").textContent="Poné tu correo y tu contraseña.";return}
+ const b=$("lbtn");b.disabled=true;b.textContent="Entrando…";
+ try{cred={correo,clave};const r=await api("login");
+  if(!r.ok){cred=null;$("lerr").textContent=r.error;return}
+  ls.set("med_cred",cred);S.rol=r.rol;pantallaLogin(false);if(r.primeraVez)toast("Listo, esa es tu contraseña desde ahora");cargar()}
+ catch(e){cred=null;$("lerr").textContent=e.message.indexOf("URL")>=0?e.message:"No se pudo conectar. Revisá internet."}
+ finally{b.disabled=false;b.textContent="Entrar"}});
+
+document.addEventListener("click",ev=>{
+ const el=ev.target.closest("[data-tab],[data-f],#qf,.t[data-id],#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
+ if(el.dataset.tab){S.tab=el.dataset.tab;S.filtro=null;render();return}
+ if(el.dataset.f){S.tab="prox";S.filtro=S.filtro===el.dataset.f?null:el.dataset.f;render();return}
+ if(el.id==="qf"){S.filtro=null;render();return}
+ if(el.id==="nuevo"){form();return}
+ if(el.classList.contains("t")){detalle(el.dataset.id);return}
+ const id=$("sh").dataset.id;
+ if(el.dataset.via){cambiar(id,{viatico:el.dataset.via});return}
+ if(el.dataset.est){cambiar(id,{estado:el.dataset.est});return}
+ const a=el.dataset.act;
+ if(a==="cerrar")cerrar();
+ else if(a==="volver")detalle(id);
+ else if(a==="editar")form(get(id));
+ else if(a==="borrar"){el.outerHTML=`<button class="b red" data-act="borrarsi">¿Seguro? Tocá para borrar</button>`}
+ else if(a==="borrarsi")borrar(id);
+ else if(a==="salir")salir();
+ else if(a==="recargar"){toast("Actualizando…");cargar()}
+});
+$("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")cerrar()});
+$("q").addEventListener("input",e=>{S.q=e.target.value;render()});
+
+render();
+S.internos=ls.get("med_int")||[];
+cred=ls.get("med_cred");
+if(cred){pantallaLogin(false);cargar()}else pantallaLogin(true);
+setInterval(()=>{if(cred&&document.visibilityState==="visible"&&!$("sheet").classList.contains("on"))cargar(true)},60000);
+document.addEventListener("visibilitychange",()=>{if(cred&&document.visibilityState==="visible")cargar(true)});
+</script></body></html>
