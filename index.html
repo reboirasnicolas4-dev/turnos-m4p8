@@ -65,6 +65,11 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 .hero small{color:var(--acc);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.hero h4{margin:3px 0 2px;font:700 20px Fraunces,serif}.hero p{margin:0;color:#e4dacb;font-size:14px}
 .chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.chk button{font:inherit;font-size:12.5px;padding:5px 10px;border-radius:99px;background:#0006;border:1px solid var(--line);color:var(--mut);cursor:pointer}.chk button.ok{border-color:var(--ok);color:var(--ok)}
 .chip.rep{color:#d4b5e8;border-color:#4a3a55}
+.inst{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#3a2410,#211b15);border:1px solid var(--acc);border-radius:16px;padding:10px 12px;margin-bottom:12px}
+.inst .tx{flex:1;font-size:13.5px}.inst .tx b{display:block;font-size:14.5px}.inst button{font:700 13.5px inherit;padding:9px 12px;border-radius:11px;border:0;background:var(--acc);color:var(--accx);cursor:pointer;white-space:nowrap}
+.inst .x{background:none;color:var(--mut);padding:6px;font-size:16px}
+body.instalada .inst,body.instalada .linst{display:none!important}
+.linst{width:100%;margin-top:12px;background:var(--card2)!important;color:var(--ink)!important;border:1px solid var(--acc)!important}
 .pfs button.pf{background:var(--card2);border:2px solid transparent;border-radius:11px;padding:7px 8px;text-align:left;color:var(--ink);font:inherit;cursor:pointer}
 .pfs button.pf b{font:700 18px Fraunces,serif;display:block;color:var(--c)}.pfs button.pf span{font-size:11.5px;color:var(--mut)}
 .pfs button.pf.on{border-color:var(--c);background:var(--soft)}
@@ -116,11 +121,13 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
  </div>
  <label class="f" style="display:flex;gap:8px;align-items:center;font-size:14px"><input id="rec" type="checkbox" style="width:auto"><span style="margin:0;color:var(--ink)">Recordarme en este dispositivo (30 días)</span></label>
  <div id="lerr" class="lerr"></div><button class="b p" id="lbtn" style="width:100%">Ingresar</button>
+ <button type="button" class="b linst" data-act="instalar">📲 Instalar la app en este aparato</button>
  <p class="lnota">Es el <b>mismo usuario y contraseña de la app de Internos</b>. ¿Te olvidaste la contraseña? Pedile un código nuevo a Nicolás.</p></form></div>
 <div class="app">
  <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small><span class="modo">👁 Modo solo mirar</span></div><button class="ic" data-act="pase" title="Pase de guardia">📋</button><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
  <div id="nota" class="nota" hidden></div>
  <div id="v-hoy">
+ <div class="inst" id="instbar" hidden><div style="font-size:26px">📲</div><div class="tx"><b>Instalá la app en este aparato</b>Queda con su ícono, como WhatsApp.</div><button data-act="instalar">Instalar</button><button class="x" data-act="noinst" title="Ahora no">✕</button></div>
  <div id="tareas"></div>
  <div class="semana" id="semana"></div>
  <div id="hero"></div>
@@ -485,7 +492,7 @@ $("lform").addEventListener("submit",async ev=>{ev.preventDefault();
  finally{b.disabled=false;if($("lsetup").hidden)b.textContent="Ingresar"}});
 
 document.addEventListener("click",ev=>{
- const el=ev.target.closest("[data-pf],[data-tarea],[data-hvia],[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id]:not(#sh),#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
+ const el=ev.target.closest("[data-pf],[data-tarea],[data-hvia],[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id]:not(#sh),#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login")&&el.dataset.act!=="instalar")return;if(!el)return;
  if(el.closest("#fm")&&!el.dataset.act)return;
  if(el.dataset.pf!==undefined){S.pfiltro=S.pfiltro===el.dataset.pf?"":el.dataset.pf;render();window.scrollTo(0,0);return}
  const modifica=el.dataset.tarea||el.dataset.lleva||el.dataset.via||el.dataset.est||el.id==="nuevo"||["editar","viaje","vguardar","borrar","borrarsi","siprox"].includes(el.dataset.act);
@@ -519,6 +526,8 @@ document.addEventListener("click",ev=>{
  else if(a==="viaje")viajeForm(id);
  else if(a==="vguardar")guardarViaje(id);
  else if(a==="pase")pase();
+ else if(a==="instalar")instalar();
+ else if(a==="noinst"){ls.set("med_noinst",new Date().toDateString());$("instbar").hidden=true}
  else if(a==="copiarpase"){try{navigator.clipboard.writeText(textoPase()).then(()=>toast("Copiado. Pegalo en WhatsApp."),()=>toast("Mantené apretado el texto para copiarlo"))}catch(e){toast("Mantené apretado el texto para copiarlo")}}
  else if(a==="siprox")guardarProx(id);
  else if(a==="verint"){const t=get(id);cerrar();S.vista="int";S.intSel=t?t.interno:null;render();window.scrollTo(0,0)}
@@ -536,6 +545,24 @@ ls.del("med_cred");
 setInterval(()=>{if(cred&&document.visibilityState==="visible"&&!$("sheet").classList.contains("on"))cargar(true)},60000);
 document.addEventListener("visibilitychange",()=>{if(cred&&document.visibilityState==="visible")cargar(true)});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+
+/* ---------- Instalar la app ---------- */
+let pedidoInstalar=null;
+const yaInstalada=()=>window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+function marcarInstalada(){document.body.classList.toggle("instalada",yaInstalada());
+ const ocultar=yaInstalada()||ls.get("med_noinst")===new Date().toDateString();$("instbar").hidden=ocultar}
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();pedidoInstalar=e;marcarInstalada()});
+window.addEventListener("appinstalled",()=>{pedidoInstalar=null;toast("✅ App instalada. Ya la tenés con su ícono.");document.body.classList.add("instalada");$("instbar").hidden=true});
+async function instalar(){
+ if(pedidoInstalar){pedidoInstalar.prompt();const r=await pedidoInstalar.userChoice.catch(()=>({}));pedidoInstalar=null;if(r&&r.outcome==="accepted")return;}
+ const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/i.test(ua),android=/Android/i.test(ua);
+ abrir(`<h2>📲 Instalar la app</h2><p class="sub">${ios?"En iPhone se instala desde Safari:":android?"En el celular, desde Chrome:":"En la computadora, desde Chrome o Edge:"}</p>
+ <div class="info">${ios?`<div><i>1</i><span style="width:auto">Abrí este link en <b>Safari</b>.</span></div><div><i>2</i><span style="width:auto">Tocá el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba).</span></div><div><i>3</i><span style="width:auto">Elegí <b>"Agregar a inicio"</b> y después <b>Agregar</b>.</span></div>`
+  :android?`<div><i>1</i><span style="width:auto">Tocá los <b>tres puntitos ⋮</b> arriba a la derecha.</span></div><div><i>2</i><span style="width:auto">Elegí <b>"Instalar app"</b> o <b>"Agregar a pantalla principal"</b>.</span></div><div><i>3</i><span style="width:auto">Tocá <b>Instalar</b>.</span></div>`
+  :`<div><i>1</i><span style="width:auto">Mirá a la derecha de la barra de direcciones: tocá el ícono de una <b>pantalla con una flechita</b>.</span></div><div><i>2</i><span style="width:auto">Si no está, tocá los <b>tres puntitos</b> y buscá <b>"Instalar Médicos"</b>.</span></div><div><i>3</i><span style="width:auto">Tocá <b>Instalar</b>.</span></div>`}</div>
+ <p class="sub" style="margin-top:10px">Queda el ícono naranja de <b>Médicos</b> en tu pantalla, y se abre como una app.</p>
+ <div class="btns"><button class="b full" data-act="cerrar">Entendido</button></div>`);$("sh").dataset.id=""}
+marcarInstalada();
 
 /* ---------- Avisos al celular ---------- */
 const FB={apiKey:"AIzaSyB5DB0Z8_6UGLkHIs3m5UiflNDXdDp1IpQ",authDomain:"medicos-alas.firebaseapp.com",projectId:"medicos-alas",storageBucket:"medicos-alas.firebasestorage.app",messagingSenderId:"710012164824",appId:"1:710012164824:web:a1d4a678d3f05977a455ad"};
