@@ -68,7 +68,12 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 .inst{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#3a2410,#211b15);border:1px solid var(--acc);border-radius:16px;padding:10px 12px;margin-bottom:12px}
 .inst .tx{flex:1;font-size:13.5px}.inst .tx b{display:block;font-size:14.5px}.inst button{font:700 13.5px inherit;padding:9px 12px;border-radius:11px;border:0;background:var(--acc);color:var(--accx);cursor:pointer;white-space:nowrap}
 .inst .x{background:none;color:var(--mut);padding:6px;font-size:16px}
-body.instalada .inst,body.instalada .linst{display:none!important}
+body.instalada #instbar,body.instalada .linst{display:none!important}
+.lnkp{display:block;margin:12px auto 0;background:none;border:0;color:var(--acc);font:700 15px inherit;text-decoration:underline;cursor:pointer}
+.solok{background:#1d2a20;border:1px solid var(--ok);color:var(--ok);border-radius:14px;padding:14px;text-align:center}
+.solc{background:var(--card2);border:1px solid var(--acc);border-radius:14px;padding:12px;margin-bottom:10px}.solc b{font-size:15.5px}.solc small{display:block;color:var(--mut);font-size:12.5px;margin:2px 0 9px}
+.solc .rol{display:flex;gap:6px;margin-bottom:8px}.solc .rol button{flex:1;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--mut);font:600 13px inherit;cursor:pointer}.solc .rol button.on{border-color:var(--acc);color:var(--acc)}
+.solc .acc{display:flex;gap:8px}.solc .acc button{flex:1;padding:11px;border-radius:11px;border:0;font:700 14px inherit;cursor:pointer}.solc .si{background:#2f7d43;color:#fff}.solc .no{background:var(--card);color:var(--red);border:1px solid var(--line)!important}
 .linst{width:100%;margin-top:12px;background:var(--card2)!important;color:var(--ink)!important;border:1px solid var(--acc)!important}
 .pfs button.pf{background:var(--card2);border:2px solid transparent;border-radius:11px;padding:7px 8px;text-align:left;color:var(--ink);font:inherit;cursor:pointer}
 .pfs button.pf b{font:700 18px Fraunces,serif;display:block;color:var(--c)}.pfs button.pf span{font-size:11.5px;color:var(--mut)}
@@ -122,12 +127,25 @@ body.instalada .inst,body.instalada .linst{display:none!important}
  <label class="f" style="display:flex;gap:8px;align-items:center;font-size:14px"><input id="rec" type="checkbox" style="width:auto"><span style="margin:0;color:var(--ink)">Recordarme en este dispositivo (30 días)</span></label>
  <div id="lerr" class="lerr"></div><button class="b p" id="lbtn" style="width:100%">Ingresar</button>
  <button type="button" class="b linst" data-act="instalar">📲 Instalar la app en este aparato</button>
- <p class="lnota">Es el <b>mismo usuario y contraseña de la app de Internos</b>. ¿Te olvidaste la contraseña? Pedile un código nuevo a Nicolás.</p></form></div>
+ <p class="lnota">Es el <b>mismo usuario y contraseña de la app de Internos</b>. ¿Te olvidaste la contraseña? Pedile un código nuevo a Nicolás.</p>
+ <button type="button" class="lnkp" id="pedirU">¿No tenés usuario? Pedilo acá</button></form>
+ <div id="pedirbox" hidden style="text-align:left">
+  <div id="pform"><h2 style="font:700 22px Fraunces,serif;margin:0 0 4px">Pedir usuario</h2>
+  <p style="color:var(--mut);margin:0 0 14px;font-size:14px">Completá tus datos. Nicolás tiene que aprobarte antes de que puedas entrar. Te sirve para Médicos y para Internos.</p>
+  <label class="f"><span>Nombre y apellido</span><input id="pnom" autocomplete="name" maxlength="60" placeholder="Ej: Juan Pérez"></label>
+  <label class="f"><span>Correo electrónico (va a ser tu usuario)</span><input id="pcor" type="email" autocomplete="username" placeholder="nombre@correo.com"></label>
+  <label class="f"><span>Elegí tu contraseña (mínimo 6 caracteres)</span><input id="pp1" type="password" autocomplete="new-password"></label>
+  <label class="f"><span>Repetila</span><input id="pp2" type="password" autocomplete="new-password"></label>
+  <div id="pmsg" class="lerr"></div><button type="button" class="b p" id="penv" style="width:100%">Enviar solicitud</button></div>
+  <div id="pok" hidden class="solok"><div style="font-size:30px">✅</div><b>¡Solicitud enviada!</b><br>Cuando Nicolás te apruebe, vas a poder entrar con tu correo y la contraseña que elegiste.</div>
+  <button type="button" class="b" id="pvolver" style="width:100%;margin-top:10px">‹ Volver a Ingresar</button>
+ </div></div>
 <div class="app">
  <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small><span class="modo">👁 Modo solo mirar</span></div><button class="ic" data-act="pase" title="Pase de guardia">📋</button><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
  <div id="nota" class="nota" hidden></div>
  <div id="v-hoy">
  <div class="inst" id="instbar" hidden><div style="font-size:26px">📲</div><div class="tx"><b>Instalá la app en este aparato</b>Queda con su ícono, como WhatsApp.</div><button data-act="instalar">Instalar</button></div>
+ <div class="inst" id="solbar" hidden data-act="sols" style="cursor:pointer"><div style="font-size:26px">👤</div><div class="tx"><b id="soltx"></b>Tocá para ver y aprobar.</div><span style="font-size:20px;color:var(--mut)">›</span></div>
  <div class="inst" id="avbar" hidden><div style="font-size:26px">🔔</div><div class="tx"><b>Activá los avisos de médicos</b>Te llegan al celular 5 y 3 días antes, con lo que falta hacer.</div><button data-act="activar">Activar</button><button class="x" data-act="noav" title="Ahora no">✕</button></div>
  <div id="tareas"></div>
  <div class="semana" id="semana"></div>
@@ -447,7 +465,7 @@ async function cargar(silencioso){
  if(!cred||cargando)return;cargando=true;
  try{const r=await api("listar");
   if(!r.ok){if(r.auth===false||/contraseña|acceso|sesión/i.test(r.error||"")){salir(true);$("lerr").textContent=r.error||"Tu sesión venció. Ingresá de nuevo con tu contraseña."}else nota(r.error);return}
-  S.list=r.turnos||[];S.rol=r.rol;if(Array.isArray(r.internos)){S.internos=r.internos;ls.set("med_int",r.internos)}
+  S.list=r.turnos||[];S.rol=r.rol;revisarSol();if(Array.isArray(r.internos)){S.internos=r.internos;ls.set("med_int",r.internos)}
   nota("");render();
   const id=$("sh").dataset.id;if($("sheet").classList.contains("on")&&id&&!$("sh").querySelector("input,textarea")&&!$("pasetx")){if(get(id))detalle(id);else cerrar()}
  }catch(e){if(!silencioso)nota("No se pudo conectar. Revisá internet y tocá ⟳ para reintentar.")}
@@ -546,6 +564,10 @@ document.addEventListener("click",ev=>{
  else if(a==="siprox")guardarProx(id);
  else if(a==="verint"){const t=get(id);cerrar();S.vista="int";S.intSel=t?t.interno:null;render();window.scrollTo(0,0)}
  else if(a==="activar")activarAvisos();
+ else if(a==="sols")panelSol();
+ else if(a==="solrol"){const k=el.dataset.k;SOL.rol[k]=el.dataset.r;panelSol()}
+ else if(a==="solsi")resolverSol(el.dataset.k,true,el);
+ else if(a==="solno")resolverSol(el.dataset.k,false,el);
  else if(a==="probar")probarAviso();
  else if(a==="apagar")apagarAvisos();
 });
@@ -581,6 +603,38 @@ async function instalar(){
  <p class="sub" style="margin-top:10px">Queda el ícono naranja de <b>Médicos</b> en tu pantalla, y se abre como una app.</p>
  <div class="btns"><button class="b full" data-act="cerrar">Entendido</button></div>`);$("sh").dataset.id=""}
 marcarInstalada();
+
+/* ---------- Pedir usuario (se guarda en la app de Internos) y aprobar (solo el dueño) ---------- */
+const DUENO="reboirasnicolas4@gmail.com";
+const SOL={lista:[],rol:{}};
+function verPedir(on){$("pedirbox").hidden=!on;$("lform").hidden=on;document.querySelectorAll("#login>h1,#login>p").forEach(e=>e.hidden=on);
+ if(on){$("pform").hidden=false;$("pok").hidden=true;$("pmsg").textContent="";$("pcor").value=$("lcorreo").value.trim();$("pp1").value=$("pp2").value=""}}
+$("pedirU").onclick=()=>verPedir(true);
+$("pvolver").onclick=()=>{verPedir(false);$("lerr").textContent=""};
+$("penv").onclick=async()=>{const n=$("pnom").value.trim(),c=$("pcor").value.trim().toLowerCase(),a=$("pp1").value,b=$("pp2").value,m=$("pmsg");
+ m.textContent=n.length<2?"Poné tu nombre y apellido.":!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c)?"Poné un correo válido.":a.length<6?"La contraseña tiene que tener al menos 6 caracteres.":a!==b?"Las dos contraseñas no coinciden.":"";
+ if(m.textContent)return;const bt=$("penv");bt.disabled=true;bt.textContent="Enviando…";
+ try{const r=await postInt({action:"pedirUsuario",email:c,nombre:n,newPassword:a});
+  if(!r||r.ok!==true){m.textContent=(r&&r.error)||"No se pudo enviar.";return}
+  $("pp1").value=$("pp2").value="";$("lcorreo").value=c;$("pform").hidden=true;$("pok").hidden=false}
+ catch(e){m.textContent="No se pudo conectar. Probá de nuevo."}finally{bt.disabled=false;bt.textContent="Enviar solicitud"}};
+const esDueno=()=>!!cred&&String(cred.correo||"").toLowerCase()===DUENO;
+async function revisarSol(){if(!esDueno()){$("solbar").hidden=true;return}
+ try{const r=await postInt({email:cred.correo,token:cred.token,action:"listSolicitudes"});if(r&&r.ok===true){SOL.lista=r.data||[];pintarSol()}}catch(e){}}
+function pintarSol(){const n=SOL.lista.length;$("solbar").hidden=!n||!esDueno();$("soltx").textContent=n===1?"1 persona pide usuario":n+" personas piden usuario"}
+function panelSol(){const L=SOL.lista;
+ abrir(`<h2>👤 Piden usuario</h2><p class="sub">Elegí qué puede hacer cada uno y tocá <b>Permitir</b>. Queda creado para Médicos y para Internos.</p>
+ ${L.length?L.map((s,k)=>{const r=SOL.rol[k]||"Usuario";return `<div class="solc"><b>${esc(s.nombre||s.email)}</b><small>${esc(s.email)} · pidió el ${new Date(s.fecha).toLocaleDateString("es-UY")}</small>
+  <div class="rol"><button class="${r==="Usuario"?"on":""}" data-act="solrol" data-k="${k}" data-r="Usuario">👁 Usuario (solo mira)</button><button class="${r==="Admin"?"on":""}" data-act="solrol" data-k="${k}" data-r="Admin">✏️ Admin</button></div>
+  <div class="acc"><button class="no" data-act="solno" data-k="${k}">Rechazar</button><button class="si" data-act="solsi" data-k="${k}">Permitir</button></div></div>`}).join(""):`<div class="vacio">No hay solicitudes.</div>`}
+ <div class="btns"><button class="b full" data-act="cerrar">Cerrar</button></div>`);$("sh").dataset.id=""}
+async function resolverSol(k,si,btn){const s=SOL.lista[k];if(!s)return;
+ if(!si&&btn.dataset.ok!=="1"){btn.dataset.ok="1";btn.textContent="¿Seguro? Tocá de nuevo";return}
+ btn.disabled=true;btn.textContent="Guardando…";const rol=SOL.rol[k]||"Usuario";
+ try{const r=await postInt({email:cred.correo,token:cred.token,action:si?"aprobarSolicitud":"rechazarSolicitud",quien:s.email,rolNuevo:rol});
+  if(!r||r.ok!==true){toast((r&&r.error)||"No se pudo");panelSol();return}
+  toast(si?"✅ "+(s.nombre||s.email)+" ya puede entrar como "+rol:"Solicitud rechazada");SOL.rol={};await revisarSol();panelSol()}
+ catch(e){toast("No se pudo conectar");panelSol()}}
 
 /* ---------- Avisos al celular ---------- */
 const FB={apiKey:"AIzaSyB5DB0Z8_6UGLkHIs3m5UiflNDXdDp1IpQ",authDomain:"medicos-alas.firebaseapp.com",projectId:"medicos-alas",storageBucket:"medicos-alas.firebasestorage.app",messagingSenderId:"710012164824",appId:"1:710012164824:web:a1d4a678d3f05977a455ad"};
