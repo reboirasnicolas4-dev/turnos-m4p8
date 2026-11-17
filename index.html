@@ -465,7 +465,7 @@ async function cargar(silencioso){
  if(!cred||cargando)return;cargando=true;
  try{const r=await api("listar");
   if(!r.ok){if(r.auth===false||/contraseña|acceso|sesión/i.test(r.error||"")){salir(true);$("lerr").textContent=r.error||"Tu sesión venció. Ingresá de nuevo con tu contraseña."}else nota(r.error);return}
-  S.list=r.turnos||[];S.rol=r.rol;revisarSol();if(Array.isArray(r.internos)){S.internos=r.internos;ls.set("med_int",r.internos)}
+  S.list=r.turnos||[];S.rol=r.rol;ls.set("med_cache",{c:cred.correo,rol:r.rol,list:S.list});revisarSol();if(Array.isArray(r.internos)){S.internos=r.internos;ls.set("med_int",r.internos)}
   nota("");render();
   const id=$("sh").dataset.id;if($("sheet").classList.contains("on")&&id&&!$("sh").querySelector("input,textarea")&&!$("pasetx")){if(get(id))detalle(id);else cerrar()}
  }catch(e){if(!silencioso)nota("No se pudo conectar. Revisá internet y tocá ⟳ para reintentar.")}
@@ -485,8 +485,11 @@ async function borrar(id){
   S.list=S.list.filter(t=>t.id!==id);render();cerrar();toast("Turno borrado")}catch(e){toast("No se pudo borrar. Revisá internet.")}}
 
 /* ---------- Entrar / salir ---------- */
+// Muestra al instante lo último que se vio en este aparato (con los permisos de la última vez) mientras llega lo nuevo
+function usarCopia(rol){const k=ls.get("med_cache");if(!k||!cred||k.c!==cred.correo)return;
+ if(!S.list.length)S.list=k.list||[];S.rol=rol||k.rol;render()}
 function pantallaLogin(on){$("login").hidden=!on;document.querySelector(".app").hidden=on;$("nuevo").hidden=on;$("nav").hidden=on}
-function salir(vencida){const c=cred;cred=null;borrarSesion();S.list=[];
+function salir(vencida){const c=cred;cred=null;borrarSesion();S.list=[];if(!vencida)ls.del("med_cache");
  try{const t=ls.get("med_tok");if(t&&c&&!vencida){api0("desregistrar",{ptok:t,correo:c.correo,token:c.token}).catch(()=>{});ls.del("med_tok")}}catch(e){}
  if(c&&c.token&&!vencida)postInt({email:c.correo,token:c.token,action:"logout"}).catch(()=>{});
  $("lclave").value="";modoSetup(false);pantallaLogin(true)}
@@ -495,7 +498,7 @@ function modoSetup(on,codigo){$("lsetup").hidden=!on;$("pwrow").hidden=on;$("cod
  $("lbtn").textContent=on?"Crear contraseña e ingresar":"Ingresar"}
 async function entrarCon(correo,token,rec){cred={correo,token};const r=await api("login");
  if(!r.ok){cred=null;return r.error||"No se pudo ingresar."}
- guardarSesion(rec);S.rol=r.rol;pantallaLogin(false);cargar();return ""}
+ guardarSesion(rec);S.rol=r.rol;pantallaLogin(false);usarCopia(r.rol);cargar();return ""}
 $("lcorreo").addEventListener("input",()=>{if(!$("lsetup").hidden)modoSetup(false)});
 $("lform").addEventListener("submit",async ev=>{ev.preventDefault();
  const correo=$("lcorreo").value.trim().toLowerCase(),setup=!$("lsetup").hidden,rec=$("rec").checked;$("lerr").textContent="";
@@ -577,7 +580,7 @@ $("q").addEventListener("input",e=>{S.q=e.target.value;render()});
 render();
 S.internos=ls.get("med_int")||[];
 ls.del("med_cred");
-{const ss=sesionGuardada();if(ss&&ss.email&&ss.token){cred={correo:ss.email,token:ss.token};try{sessionStorage.setItem("med-sesion",JSON.stringify(ss));sessionStorage.removeItem("alas-paso")}catch(x){}pantallaLogin(false);cargar()}else pantallaLogin(true)}
+{const ss=sesionGuardada();if(ss&&ss.email&&ss.token){cred={correo:ss.email,token:ss.token};try{sessionStorage.setItem("med-sesion",JSON.stringify(ss));sessionStorage.removeItem("alas-paso")}catch(x){}pantallaLogin(false);usarCopia();cargar()}else pantallaLogin(true)}
 setInterval(()=>{if(cred&&document.visibilityState==="visible"&&!$("sheet").classList.contains("on"))cargar(true)},60000);
 document.addEventListener("visibilitychange",()=>{if(cred&&document.visibilityState==="visible")cargar(true)});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
