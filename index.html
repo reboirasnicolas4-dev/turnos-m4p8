@@ -65,6 +65,9 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 .hero small{color:var(--acc);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.hero h4{margin:3px 0 2px;font:700 20px Fraunces,serif}.hero p{margin:0;color:#e4dacb;font-size:14px}
 .chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.chk button{font:inherit;font-size:12.5px;padding:5px 10px;border-radius:99px;background:#0006;border:1px solid var(--line);color:var(--mut);cursor:pointer}.chk button.ok{border-color:var(--ok);color:var(--ok)}
 .chip.rep{color:#d4b5e8;border-color:#4a3a55}
+.hplata{margin-top:11px;padding-top:10px;border-top:1px solid #ffffff1a}.hpt{font-weight:700;font-size:14px;margin-bottom:7px}.hpt .hfam{color:var(--mut);font-weight:500}.hpno{color:var(--mut);font-size:13.5px}
+.hpb{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.hpb button{font:600 12.5px inherit;padding:8px 4px;border-radius:11px;background:#0006;border:1px solid var(--line);color:var(--mut);cursor:pointer}
+.hpb button.on.sin{background:#4a3210;border-color:var(--acc);color:var(--acc)}.hpb button.on.pedido{background:#1e2a40;border-color:var(--blue);color:var(--blue)}.hpb button.on.recibido{background:#1c3324;border-color:var(--ok);color:var(--ok)}
 .mesh{display:flex;align-items:center;gap:8px;margin-bottom:10px}.mesh h2{flex:1;margin:0;font:700 22px Fraunces,serif;text-align:center}
 .mes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:12px}
 .mes .h{color:var(--mut);font-size:10.5px;text-align:center;text-transform:uppercase;padding:2px 0}
@@ -170,7 +173,9 @@ function vHoy(){
  if(prox){const p=partes(prox),n=dias(prox.fecha);
   $("hero").innerHTML=`<div class="hero" data-id="${esc(prox.id)}"><small>Próximo médico · ${rel(n)||fLarga(prox)}${prox.hora?" "+esc(prox.hora):""}</small><h4>${esc(prox.interno)}</h4>
   <p>📍 ${esc(prox.lugar||"sin lugar")}${prox.especialidad?" · "+esc(prox.especialidad):""}${prox.acompana?" · lo lleva "+esc(prox.acompana):""}</p>
-  <div class="chk">${LLEVA.map(x=>{const ok=p.lleva.includes(x);return `<button class="${ok?"ok":""}" data-lleva="${x}" data-tid="${esc(prox.id)}">${ok?"✔":"○"} ${x}</button>`}).join("")}</div></div>`}
+  <div class="chk">${LLEVA.map(x=>{const ok=p.lleva.includes(x);return `<button class="${ok?"ok":""}" data-lleva="${x}" data-tid="${esc(prox.id)}">${ok?"✔":"○"} ${x}</button>`}).join("")}</div>
+  <div class="hplata"><div class="hpt">💵 Plata${prox.monto&&prox.viatico!=="no"?" · "+plata(prox.monto):""}${prox.familia&&prox.viatico!=="no"?` <span class="hfam">· ${esc(prox.familia)}</span>`:""}</div>
+  ${prox.viatico==="no"?`<div class="hpno">No precisa viáticos</div>`:`<div class="hpb">${[["sin","💸 Falta pedir"],["pedido","⏳ Ya se pidió"],["recibido","✅ Ya la pagaron"]].map(([v,l])=>`<button class="${v}${prox.viatico===v?" on":""}" data-hvia="${v}" data-tid="${esc(prox.id)}">${l}</button>`).join("")}</div>`}</div></div>`}
  else $("hero").innerHTML="";
  const u=pend.filter(urg).sort(ord);
  $("alerta").innerHTML=u.length?`<div class="alerta">⚠️ ${u.map(t=>`<b>${esc(t.interno)}</b> tiene médico ${rel(dias(t.fecha)).toLowerCase()}`).join(", ")} y <b>todavía no se pidieron los viáticos</b>.</div>`:"";
@@ -347,8 +352,9 @@ $("lform").addEventListener("submit",async ev=>{ev.preventDefault();
  finally{b.disabled=false;b.textContent="Entrar"}});
 
 document.addEventListener("click",ev=>{
- const el=ev.target.closest("[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id],#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
+ const el=ev.target.closest("[data-hvia],[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id],#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
  if(el.closest("#fm")&&!el.dataset.act)return;
+ if(el.dataset.hvia){cambiar(el.dataset.tid,{viatico:el.dataset.hvia},true);toast({sin:"💸 Falta pedir la plata",pedido:"⏳ Marcado: ya se pidió",recibido:"✅ Marcado: ya la pagaron"}[el.dataset.hvia]);return}
  if(el.dataset.lleva){toggleLleva(el.dataset.tid,el.dataset.lleva,$("sheet").classList.contains("on"));return}
  if(el.dataset.v){S.vista=el.dataset.v;S.dia=null;if(el.dataset.v!=="int")S.intSel=null;cerrar();render();window.scrollTo(0,0);return}
  if(el.dataset.dia!==undefined){const d=+el.dataset.dia;S.dia=S.dia===d?null:d;S.tab="prox";render();return}
