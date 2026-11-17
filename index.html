@@ -66,7 +66,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
  <div id="lerr" class="lerr"></div><button class="b p" id="lbtn" style="width:100%">Entrar</button>
  <p class="lnota">La primera vez que entrás, la contraseña que escribas queda como la tuya. Si tu correo no tiene acceso, pedile a un Admin que te agregue.</p></form></div>
 <div class="app">
- <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small></div><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
+ <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small></div><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
  <div id="nota" class="nota" hidden></div>
  <div class="res" id="res"></div>
  <div id="alerta"></div>
@@ -79,6 +79,8 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 <div class="sheet" id="sheet"><div class="sh" id="sh"></div></div>
 <datalist id="dl-int"></datalist><datalist id="dl-lug"></datalist>
 <div class="toast" id="toast"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -243,6 +245,10 @@ document.addEventListener("click",ev=>{
  else if(a==="borrarsi")borrar(id);
  else if(a==="salir")salir();
  else if(a==="recargar"){toast("Actualizando…");cargar()}
+ else if(a==="avisos")panelAvisos();
+ else if(a==="activar")activarAvisos();
+ else if(a==="probar")probarAviso();
+ else if(a==="apagar")apagarAvisos();
 });
 $("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")cerrar()});
 $("q").addEventListener("input",e=>{S.q=e.target.value;render()});
@@ -254,4 +260,38 @@ if(cred){pantallaLogin(false);cargar()}else pantallaLogin(true);
 setInterval(()=>{if(cred&&document.visibilityState==="visible"&&!$("sheet").classList.contains("on"))cargar(true)},60000);
 document.addEventListener("visibilitychange",()=>{if(cred&&document.visibilityState==="visible")cargar(true)});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+
+/* ---------- Avisos al celular ---------- */
+const FB={apiKey:"AIzaSyB5DB0Z8_6UGLkHIs3m5UiflNDXdDp1IpQ",authDomain:"medicos-alas.firebaseapp.com",projectId:"medicos-alas",storageBucket:"medicos-alas.firebasestorage.app",messagingSenderId:"710012164824",appId:"1:710012164824:web:a1d4a678d3f05977a455ad"};
+const VAPID="BCSCzAuzajEaBOoy7eIMcqXlkkq9nIzXp0W12nWq9d_4_UrsNQqHBYjaKjU6-xXvs5s_--AuIsW-XMeX4Sqo8E8";
+function fbMsg(){if(!window.firebase)return null;if(!firebase.apps.length)firebase.initializeApp(FB);return firebase.messaging()}
+const avisosPosibles=()=>("Notification" in window)&&("serviceWorker" in navigator)&&("PushManager" in window)&&!!window.firebase;
+function panelAvisos(){
+ const on=!!ls.get("med_tok")&&avisosPosibles()&&Notification.permission==="granted";
+ const ios=/iPhone|iPad/i.test(navigator.userAgent)&&!window.navigator.standalone;
+ abrir(`<h2>🔔 Avisos de médicos</h2><p class="sub">Te llega un aviso al celular, con el ícono de la app:</p>
+ <div class="info"><div><i>5️⃣</i><span>5 días antes</span>un aviso a las 7 de la mañana</div><div><i>3️⃣</i><span>Desde 3 días antes</span>todos los días a las 7 y a las 17, hasta el día del médico</div></div>
+ <div class="lbl">En este aparato</div>
+ ${!avisosPosibles()?`<div class="nota">${ios?"En iPhone primero tenés que agregar la app a la pantalla de inicio (botón Compartir → Agregar a inicio) y abrirla desde ese ícono.":"Este navegador no permite avisos. Probá con Chrome."}</div>`:
+  on?`<div class="nota" style="border-color:var(--ok);color:var(--ok)">✅ Los avisos están activados en este aparato.</div><div class="btns"><button class="b" data-act="probar">Mandar aviso de prueba</button><button class="b" data-act="apagar">Apagar avisos</button></div>`:
+  `<button class="b p full" data-act="activar" style="width:100%">🔔 Activar avisos en este aparato</button><p class="sub" style="margin-top:8px">Cuando el celular pregunte, tocá <b>Permitir</b>.</p>`}
+ <div class="btns" style="margin-top:12px"><button class="b full" data-act="cerrar">Cerrar</button></div>`);$("sh").dataset.id=""}
+async function activarAvisos(){
+ try{if(!avisosPosibles()){panelAvisos();return}
+  const perm=await Notification.requestPermission();
+  if(perm!=="granted"){toast("Tenés que tocar Permitir para recibir avisos");return}
+  toast("Activando…");
+  const reg=await navigator.serviceWorker.register("sw.js");await navigator.serviceWorker.ready;
+  const tok=await fbMsg().getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});
+  if(!tok){toast("No se pudo activar. Probá de nuevo.");return}
+  const r=await api("registrar",{token:tok,disp:navigator.userAgent.slice(0,120)});
+  if(!r.ok){toast(r.error||"No se pudo activar");return}
+  ls.set("med_tok",tok);panelAvisos();probarAviso()}
+ catch(e){toast("No se pudo activar los avisos: "+(e&&e.message||e))}}
+async function probarAviso(){const tok=ls.get("med_tok");if(!tok)return;
+ try{const r=await api("probarAviso",{token:tok});toast(r.ok?"Te mandé un aviso de prueba":(r.error||"No se pudo mandar"))}catch(e){toast("No se pudo mandar el aviso")}}
+async function apagarAvisos(){const tok=ls.get("med_tok");
+ try{if(tok)await api("desregistrar",{token:tok});const m=fbMsg();if(m)await m.deleteToken().catch(()=>{})}catch(e){}
+ ls.del("med_tok");toast("Avisos apagados en este aparato");panelAvisos()}
+try{if(avisosPosibles()&&Notification.permission==="granted"){fbMsg().onMessage(p=>{const n=p.notification||{};navigator.serviceWorker.ready.then(r=>r.showNotification(n.title||"Médicos",{body:n.body||"",icon:"icon-192.png",badge:"badge-96.png",tag:"fg"}))})}}catch(e){}
 </script></body></html>
