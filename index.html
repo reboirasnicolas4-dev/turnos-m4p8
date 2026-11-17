@@ -128,6 +128,7 @@ body.instalada .inst,body.instalada .linst{display:none!important}
  <div id="nota" class="nota" hidden></div>
  <div id="v-hoy">
  <div class="inst" id="instbar" hidden><div style="font-size:26px">📲</div><div class="tx"><b>Instalá la app en este aparato</b>Queda con su ícono, como WhatsApp.</div><button data-act="instalar">Instalar</button><button class="x" data-act="noinst" title="Ahora no">✕</button></div>
+ <div class="inst" id="avbar" hidden><div style="font-size:26px">🔔</div><div class="tx"><b>Activá los avisos de médicos</b>Te llegan al celular 5 y 3 días antes, con lo que falta hacer.</div><button data-act="activar">Activar</button><button class="x" data-act="noav" title="Ahora no">✕</button></div>
  <div id="tareas"></div>
  <div class="semana" id="semana"></div>
  <div id="hero"></div>
@@ -218,6 +219,7 @@ function tarjeta(t,conDia){const n=dias(t.fecha),d=pf(t.fecha),p=partes(t);
      ${p.rep?`<span class="chip rep">🔁 ${esc(p.rep)}</span>`:""}</div></div></div>`}
 function render(){
  document.body.classList.toggle("solover",S.rol!=="Admin");
+ revisarAvBar();
  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===S.vista));
  $("v-hoy").hidden=S.vista!=="hoy";$("v-otra").hidden=S.vista==="hoy";
  if(cred)$("nuevo").hidden=S.vista==="plata";
@@ -527,6 +529,7 @@ document.addEventListener("click",ev=>{
  else if(a==="vguardar")guardarViaje(id);
  else if(a==="pase")pase();
  else if(a==="instalar")instalar();
+ else if(a==="noav"){ls.set("med_noav",new Date().toDateString());$("avbar").hidden=true}
  else if(a==="noinst"){ls.set("med_noinst",new Date().toDateString());$("instbar").hidden=true}
  else if(a==="copiarpase"){try{navigator.clipboard.writeText(textoPase()).then(()=>toast("Copiado. Pegalo en WhatsApp."),()=>toast("Mantené apretado el texto para copiarlo"))}catch(e){toast("Mantené apretado el texto para copiarlo")}}
  else if(a==="siprox")guardarProx(id);
@@ -546,13 +549,16 @@ setInterval(()=>{if(cred&&document.visibilityState==="visible"&&!$("sheet").clas
 document.addEventListener("visibilitychange",()=>{if(cred&&document.visibilityState==="visible")cargar(true)});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 
+function revisarAvBar(){try{const b=$("avbar");if(!b)return;
+ const ok=avisosPosibles()&&Notification.permission!=="denied"&&!(ls.get("med_tok")&&Notification.permission==="granted")&&ls.get("med_noav")!==new Date().toDateString();
+ b.hidden=!ok}catch(e){}}
 /* ---------- Instalar la app ---------- */
 let pedidoInstalar=null;
 const yaInstalada=()=>window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
 function marcarInstalada(){document.body.classList.toggle("instalada",yaInstalada());
  const ocultar=yaInstalada()||ls.get("med_noinst")===new Date().toDateString();$("instbar").hidden=ocultar}
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();pedidoInstalar=e;marcarInstalada()});
-window.addEventListener("appinstalled",()=>{pedidoInstalar=null;toast("✅ App instalada. Ya la tenés con su ícono.");document.body.classList.add("instalada");$("instbar").hidden=true});
+window.addEventListener("appinstalled",()=>{pedidoInstalar=null;document.body.classList.add("instalada");$("instbar").hidden=true;revisarAvBar();toast(!$("avbar").hidden?"✅ App instalada. Ahora tocá Activar para recibir los avisos.":"✅ App instalada. Ya la tenés con su ícono.")});
 async function instalar(){
  if(pedidoInstalar){pedidoInstalar.prompt();const r=await pedidoInstalar.userChoice.catch(()=>({}));pedidoInstalar=null;if(r&&r.outcome==="accepted")return;}
  const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/i.test(ua),android=/Android/i.test(ua);
@@ -582,19 +588,19 @@ function panelAvisos(){
 async function activarAvisos(){
  try{if(!avisosPosibles()){panelAvisos();return}
   const perm=await Notification.requestPermission();
-  if(perm!=="granted"){toast("Tenés que tocar Permitir para recibir avisos");return}
+  if(perm!=="granted"){revisarAvBar();toast(perm==="denied"?"Las notificaciones quedaron bloqueadas. Habilitalas en los ajustes del navegador para esta página.":"Tenés que tocar Permitir para recibir avisos");return}
   toast("Activando…");
   const reg=await navigator.serviceWorker.register("sw.js");await navigator.serviceWorker.ready;
   const tok=await fbMsg().getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});
   if(!tok){toast("No se pudo activar. Probá de nuevo.");return}
   const r=await api("registrar",{token:tok,disp:navigator.userAgent.slice(0,120)});
   if(!r.ok){toast(r.error||"No se pudo activar");return}
-  ls.set("med_tok",tok);panelAvisos();probarAviso()}
+  ls.set("med_tok",tok);revisarAvBar();panelAvisos();probarAviso()}
  catch(e){toast("No se pudo activar los avisos: "+(e&&e.message||e))}}
 async function probarAviso(){const tok=ls.get("med_tok");if(!tok)return;
  try{const r=await api("probarAviso",{token:tok});toast(r.ok?"Te mandé un aviso de prueba":(r.error||"No se pudo mandar"))}catch(e){toast("No se pudo mandar el aviso")}}
 async function apagarAvisos(){const tok=ls.get("med_tok");
  try{if(tok)await api("desregistrar",{token:tok});const m=fbMsg();if(m)await m.deleteToken().catch(()=>{})}catch(e){}
- ls.del("med_tok");toast("Avisos apagados en este aparato");panelAvisos()}
+ ls.del("med_tok");toast("Avisos apagados en este aparato");revisarAvBar();panelAvisos()}
 try{if(avisosPosibles()&&Notification.permission==="granted"){fbMsg().onMessage(p=>{const n=p.notification||{};navigator.serviceWorker.ready.then(r=>r.showNotification(n.title||"Médicos",{body:n.body||"",icon:"icon-192.png",badge:"badge-96.png",tag:"fg"}))})}}catch(e){}
 </script></body></html>
