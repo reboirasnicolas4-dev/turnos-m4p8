@@ -127,7 +127,7 @@ body.instalada .inst,body.instalada .linst{display:none!important}
  <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small><span class="modo">👁 Modo solo mirar</span></div><button class="ic" data-act="pase" title="Pase de guardia">📋</button><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
  <div id="nota" class="nota" hidden></div>
  <div id="v-hoy">
- <div class="inst" id="instbar" hidden><div style="font-size:26px">📲</div><div class="tx"><b>Instalá la app en este aparato</b>Queda con su ícono, como WhatsApp.</div><button data-act="instalar">Instalar</button><button class="x" data-act="noinst" title="Ahora no">✕</button></div>
+ <div class="inst" id="instbar" hidden><div style="font-size:26px">📲</div><div class="tx"><b>Instalá la app en este aparato</b>Queda con su ícono, como WhatsApp.</div><button data-act="instalar">Instalar</button></div>
  <div class="inst" id="avbar" hidden><div style="font-size:26px">🔔</div><div class="tx"><b>Activá los avisos de médicos</b>Te llegan al celular 5 y 3 días antes, con lo que falta hacer.</div><button data-act="activar">Activar</button><button class="x" data-act="noav" title="Ahora no">✕</button></div>
  <div id="tareas"></div>
  <div class="semana" id="semana"></div>
@@ -556,7 +556,7 @@ function revisarAvBar(){try{const b=$("avbar");if(!b)return;
 let pedidoInstalar=null;
 const yaInstalada=()=>window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
 function marcarInstalada(){document.body.classList.toggle("instalada",yaInstalada());
- const ocultar=yaInstalada()||ls.get("med_noinst")===new Date().toDateString();$("instbar").hidden=ocultar}
+ const ocultar=yaInstalada();$("instbar").hidden=ocultar}
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();pedidoInstalar=e;marcarInstalada()});
 window.addEventListener("appinstalled",()=>{pedidoInstalar=null;document.body.classList.add("instalada");$("instbar").hidden=true;revisarAvBar();toast(!$("avbar").hidden?"✅ App instalada. Ahora tocá Activar para recibir los avisos.":"✅ App instalada. Ya la tenés con su ícono.")});
 async function instalar(){
