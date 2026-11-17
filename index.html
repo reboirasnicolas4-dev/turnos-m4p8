@@ -554,11 +554,12 @@ function revisarAvBar(){try{const b=$("avbar");if(!b)return;
  b.hidden=!ok}catch(e){}}
 /* ---------- Instalar la app ---------- */
 let pedidoInstalar=null;
-const yaInstalada=()=>window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+const abiertaComoApp=()=>window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+const yaInstalada=()=>{if(abiertaComoApp())ls.set("med_inst","1");return abiertaComoApp()||ls.get("med_inst")==="1"};
 function marcarInstalada(){document.body.classList.toggle("instalada",yaInstalada());
  const ocultar=yaInstalada();$("instbar").hidden=ocultar}
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();pedidoInstalar=e;marcarInstalada()});
-window.addEventListener("appinstalled",()=>{pedidoInstalar=null;document.body.classList.add("instalada");$("instbar").hidden=true;revisarAvBar();toast(!$("avbar").hidden?"✅ App instalada. Ahora tocá Activar para recibir los avisos.":"✅ App instalada. Ya la tenés con su ícono.")});
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();pedidoInstalar=e;ls.del("med_inst");marcarInstalada()});
+window.addEventListener("appinstalled",()=>{pedidoInstalar=null;ls.set("med_inst","1");document.body.classList.add("instalada");$("instbar").hidden=true;revisarAvBar();toast(!$("avbar").hidden?"✅ App instalada. Ahora tocá Activar para recibir los avisos.":"✅ App instalada. Ya la tenés con su ícono.")});
 async function instalar(){
  if(pedidoInstalar){pedidoInstalar.prompt();const r=await pedidoInstalar.userChoice.catch(()=>({}));pedidoInstalar=null;if(r&&r.outcome==="accepted")return;}
  const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/i.test(ua),android=/Android/i.test(ua);
