@@ -57,6 +57,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 .login{max-width:380px;margin:0 auto;padding:60px 18px;text-align:center}.login h1{font:700 30px Fraunces,serif;margin:0}.login>p{color:var(--mut);margin:4px 0 24px}
 .login form{text-align:left}.lerr{color:var(--red);min-height:20px;font-size:14px;margin:2px 0 10px}.lnota{color:var(--mut);font-size:13px;margin-top:14px}
 </style>
+<link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#16120e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Médicos"></head><body>
 <div id="login" class="login" hidden><div class="logo" style="width:64px;height:64px;margin:0 auto 14px"></div>
  <h1>Médicos</h1><p>Alas de Libertad · turnos y viáticos</p>
@@ -252,4 +253,5 @@ cred=ls.get("med_cred");
 if(cred){pantallaLogin(false);cargar()}else pantallaLogin(true);
 setInterval(()=>{if(cred&&document.visibilityState==="visible"&&!$("sheet").classList.contains("on"))cargar(true)},60000);
 document.addEventListener("visibilitychange",()=>{if(cred&&document.visibilityState==="visible")cargar(true)});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script></body></html>
