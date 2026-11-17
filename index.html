@@ -428,10 +428,21 @@ function form(t){const e=t||{viatico:"sin"};const pe=partes(e);let repSel="";let
   else toast(t?"Turno actualizado":"Turno anotado ✔");
   detalle(id)})}
 
-async function api(accion,extra){
+async function api0(accion,extra){
  if(!API||API.indexOf("http")!==0)throw new Error("Falta poner la URL del Apps Script en el archivo.");
  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({accion,correo:cred&&cred.correo,token:cred&&cred.token},extra||{}))});
  return r.json()}
+const sinSesion=r=>r&&!r.ok&&(r.auth===false||/sesión venció|Ingresá con tu correo/i.test(r.error||""));
+async function api(accion,extra){
+ let r=await api0(accion,extra);
+ if(sinSesion(r)&&cred){
+  /* si en la app de Internos se entró de nuevo, la sesión nueva queda guardada: la uso y reintento */
+  let n=null;try{n=JSON.parse(localStorage.getItem("alas-token")||"null")}catch(x){}
+  if(n&&n.token&&n.token!==cred.token&&String(n.email||"").toLowerCase()===String(cred.correo||"").toLowerCase()){
+   cred={correo:cred.correo,token:n.token};try{sessionStorage.setItem("med-sesion",JSON.stringify({email:cred.correo,token:cred.token}))}catch(x){}
+   r=await api0(accion,extra)}
+  if(sinSesion(r)&&accion!=="login"){cerrar&&cerrar();salir(true);$("lerr").textContent="Tu sesión venció. Ingresá de nuevo con tu contraseña."}}
+ return r}
 async function cargar(silencioso){
  if(!cred||cargando)return;cargando=true;
  try{const r=await api("listar");
@@ -458,7 +469,7 @@ async function borrar(id){
 /* ---------- Entrar / salir ---------- */
 function pantallaLogin(on){$("login").hidden=!on;document.querySelector(".app").hidden=on;$("nuevo").hidden=on;$("nav").hidden=on}
 function salir(vencida){const c=cred;cred=null;borrarSesion();S.list=[];
- try{const t=ls.get("med_tok");if(t&&c&&!vencida)api("desregistrar",{token:t}).catch(()=>{});ls.del("med_tok")}catch(e){}
+ try{const t=ls.get("med_tok");if(t&&c&&!vencida){api0("desregistrar",{ptok:t,correo:c.correo,token:c.token}).catch(()=>{});ls.del("med_tok")}}catch(e){}
  if(c&&c.token&&!vencida)postInt({email:c.correo,token:c.token,action:"logout"}).catch(()=>{});
  $("lclave").value="";modoSetup(false);pantallaLogin(true)}
 function modoSetup(on,codigo){$("lsetup").hidden=!on;$("pwrow").hidden=on;$("coderow").hidden=!(on&&codigo);if(!on)$("ncode").value="";
@@ -594,14 +605,14 @@ async function activarAvisos(){
   const reg=await navigator.serviceWorker.register("sw.js");await navigator.serviceWorker.ready;
   const tok=await fbMsg().getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});
   if(!tok){toast("No se pudo activar. Probá de nuevo.");return}
-  const r=await api("registrar",{token:tok,disp:navigator.userAgent.slice(0,120)});
+  const r=await api("registrar",{ptok:tok,disp:navigator.userAgent.slice(0,120)});
   if(!r.ok){toast(r.error||"No se pudo activar");return}
   ls.set("med_tok",tok);revisarAvBar();panelAvisos();probarAviso()}
  catch(e){toast("No se pudo activar los avisos: "+(e&&e.message||e))}}
 async function probarAviso(){const tok=ls.get("med_tok");if(!tok)return;
- try{const r=await api("probarAviso",{token:tok});toast(r.ok?"Te mandé un aviso de prueba":(r.error||"No se pudo mandar"))}catch(e){toast("No se pudo mandar el aviso")}}
+ try{const r=await api("probarAviso",{ptok:tok});toast(r.ok?"Te mandé un aviso de prueba":(r.error||"No se pudo mandar"))}catch(e){toast("No se pudo mandar el aviso")}}
 async function apagarAvisos(){const tok=ls.get("med_tok");
- try{if(tok)await api("desregistrar",{token:tok});const m=fbMsg();if(m)await m.deleteToken().catch(()=>{})}catch(e){}
+ try{if(tok)await api("desregistrar",{ptok:tok});const m=fbMsg();if(m)await m.deleteToken().catch(()=>{})}catch(e){}
  ls.del("med_tok");toast("Avisos apagados en este aparato");revisarAvBar();panelAvisos()}
 try{if(avisosPosibles()&&Notification.permission==="granted"){fbMsg().onMessage(p=>{const n=p.notification||{};navigator.serviceWorker.ready.then(r=>r.showNotification(n.title||"Médicos",{body:n.body||"",icon:"icon-192.png",badge:"badge-96.png",tag:"fg"}))})}}catch(e){}
 </script></body></html>
