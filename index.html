@@ -56,6 +56,32 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 .ic{background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--mut);padding:8px 11px;font:600 14px inherit;cursor:pointer}
 .login{max-width:380px;margin:0 auto;padding:60px 18px;text-align:center}.login h1{font:700 30px Fraunces,serif;margin:0}.login>p{color:var(--mut);margin:4px 0 24px}
 .login form{text-align:left}.lerr{color:var(--red);min-height:20px;font-size:14px;margin:2px 0 10px}.lnota{color:var(--mut);font-size:13px;margin-top:14px}
+.semana{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:12px}
+.dia{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 0 7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;min-width:0;color:var(--ink);font:inherit}
+.dia small{font-size:10.5px;color:var(--mut);text-transform:uppercase}.dia b{font:700 18px Fraunces,serif}
+.dia i{display:block;width:6px;height:6px;border-radius:50%;margin-top:3px}.dia.t i{background:var(--acc)}.dia.hoy{border-color:var(--acc)}
+.dia.sel{background:var(--acc);color:var(--accx)}.dia.sel small{color:var(--accx)}.dia.sel i{background:var(--accx)}
+.hero{background:linear-gradient(135deg,#3a2410,#211b15);border:1px solid var(--acc);border-radius:18px;padding:13px 14px;margin-bottom:12px;cursor:pointer}
+.hero small{color:var(--acc);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.hero h4{margin:3px 0 2px;font:700 20px Fraunces,serif}.hero p{margin:0;color:#e4dacb;font-size:14px}
+.chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.chk button{font:inherit;font-size:12.5px;padding:5px 10px;border-radius:99px;background:#0006;border:1px solid var(--line);color:var(--mut);cursor:pointer}.chk button.ok{border-color:var(--ok);color:var(--ok)}
+.chip.rep{color:#d4b5e8;border-color:#4a3a55}
+.mesh{display:flex;align-items:center;gap:8px;margin-bottom:10px}.mesh h2{flex:1;margin:0;font:700 22px Fraunces,serif;text-align:center}
+.mes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:12px}
+.mes .h{color:var(--mut);font-size:10.5px;text-align:center;text-transform:uppercase;padding:2px 0}
+.mes button{aspect-ratio:1;border-radius:9px;background:var(--card);border:1px solid transparent;color:var(--ink);font:inherit;font-size:13px;position:relative;cursor:pointer;padding:0}
+.mes button.v{visibility:hidden}.mes button.hoy{border-color:var(--acc)}.mes button.sel{background:var(--acc);color:var(--accx)}
+.mes button[data-n]:after{content:attr(data-n);position:absolute;bottom:2px;right:3px;font-size:9.5px;background:var(--acc);color:var(--accx);border-radius:99px;padding:0 4px;font-weight:700;line-height:14px}
+.mes button.sel[data-n]:after{background:var(--accx);color:var(--acc)}
+.ficha{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.ficha h3{margin:0;font:700 20px Fraunces,serif}.ficha p{margin:2px 0 0;color:var(--mut);font-size:13.5px}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0 2px}.kpi div{background:var(--card2);border-radius:11px;padding:7px 8px}.kpi b{font:700 18px Fraunces,serif;display:block}.kpi span{font-size:11.5px;color:var(--mut)}
+.hist{border-left:2px solid var(--line);margin:6px 0 0 8px;padding-left:12px}.hist div{position:relative;margin-bottom:10px;font-size:13.5px;cursor:pointer}.hist div:before{content:"";position:absolute;left:-19px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--card2);border:2px solid var(--line)}
+.hist div.f:before{border-color:var(--ok)}.hist div.nf:before{border-color:var(--red)}.hist div.p:before{border-color:var(--acc);background:var(--acc)}.hist small{color:var(--mut);display:block;white-space:pre-wrap}
+.cuenta{display:grid;grid-template-columns:1fr auto;gap:3px 10px;background:var(--card2);border-radius:12px;padding:9px 11px;font-size:13.5px;margin-top:8px}.cuenta b{text-align:right}.cuenta .r{cursor:pointer}.cuenta .tot{border-top:1px solid var(--line);padding-top:4px;margin-top:2px}
+.prox{margin-top:12px;background:var(--soft);border:1px solid var(--acc);border-radius:14px;padding:11px}
+.nav{position:fixed;left:0;right:0;bottom:0;background:#120f0c;border-top:1px solid var(--line);display:flex;justify-content:center;padding:7px 6px 10px;z-index:4}
+.nav button{flex:1;max-width:140px;background:none;border:0;color:var(--mut);font:600 11px inherit;cursor:pointer;text-align:center}.nav button i{display:block;font-style:normal;font-size:19px;line-height:28px;width:50px;margin:0 auto 2px;border-radius:99px}.nav button.on{color:var(--ink)}.nav button.on i{background:#3a2c18}
+.app{padding-bottom:170px}.fab{bottom:78px}.toast{bottom:150px}
 </style>
 <link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#16120e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Médicos"></head><body>
@@ -68,14 +94,19 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 <div class="app">
  <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small></div><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
  <div id="nota" class="nota" hidden></div>
- <div class="res" id="res"></div>
+ <div id="v-hoy">
+ <div class="semana" id="semana"></div>
+ <div id="hero"></div>
  <div id="alerta"></div>
  <div class="tabs"><button data-tab="prox" class="on">Próximos</button><button data-tab="pas">Ya fueron</button></div>
  <div class="srch">🔍<input id="q" placeholder="Buscar interno o lugar…"></div>
  <div id="filtro"></div>
  <div id="lista"></div>
+ </div>
+ <div id="v-otra" hidden></div>
 </div>
 <button class="fab" id="nuevo">＋ Anotar turno</button>
+<div class="nav" id="nav"><button data-v="hoy" class="on"><i>🏠</i>Hoy</button><button data-v="cal"><i>📅</i>Calendario</button><button data-v="int"><i>👤</i>Por interno</button><button data-v="plata"><i>💵</i>Viáticos</button></div>
 <div class="sheet" id="sheet"><div class="sh" id="sh"></div></div>
 <datalist id="dl-int"></datalist><datalist id="dl-lug"></datalist>
 <div class="toast" id="toast"></div>
@@ -86,7 +117,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"],MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 const VIA={sin:"💸 Falta pedir",pedido:"⏳ Pedido a la familia",recibido:"✅ Plata recibida",no:"No precisa"};
-const S={list:[],tab:"prox",filtro:null,q:"",internos:[],rol:""};
+const S={list:[],tab:"prox",filtro:null,q:"",internos:[],rol:"",vista:"hoy",dia:null,mes:null,calDia:null,intSel:null,prox:null};
 // ⬇⬇ PEGÁ ACÁ ENTRE LAS COMILLAS LA URL DE TU APPS SCRIPT (termina en /exec) ⬇⬇
 const API="https://script.google.com/macros/s/AKfycbzYithfRv1aTYL1CrPeYHpAcq7XccGY3Gm7Bvlb56aCn65ZlT-FS7a6ePZ7-OumAz5LRw/exec";
 const esta=n=>!S.internos.length||S.internos.some(x=>x.toLowerCase()===(n||"").toLowerCase());
@@ -103,65 +134,144 @@ function urg(t){return t.estado==="pendiente"&&t.viatico==="sin"&&dias(t.fecha)>
 function toast(m){const e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2600)}
 function nota(m){const e=$("nota");if(m){e.textContent=m;e.hidden=false}else e.hidden=true}
 
-function render(){
- const pend=S.list.filter(t=>t.estado==="pendiente");
- const sem=pend.filter(t=>{const d=dias(t.fecha);return d>=0&&d<=7}).length;
- const porPedir=pend.filter(t=>t.viatico==="sin"&&dias(t.fecha)>=0).length;
- const esperando=pend.filter(t=>t.viatico==="pedido").length;
- $("res").innerHTML=`<button data-f="sem" class="${S.filtro==="sem"?"on":""}"><b>${sem}</b><span>esta semana</span></button>
-  <button data-f="sin" class="${porPedir?"w":""} ${S.filtro==="sin"?"on":""}"><b>${porPedir}</b><span>viáticos por pedir</span></button>
-  <button data-f="pedido" class="${S.filtro==="pedido"?"on":""}"><b>${esperando}</b><span>esperando la plata</span></button>`;
- const u=pend.filter(urg).sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
- $("alerta").innerHTML=u.length?`<div class="alerta">⚠️ ${u.map(t=>`<b>${esc(t.interno)}</b> tiene médico ${rel(dias(t.fecha)).toLowerCase()}`).join(", ")} y <b>todavía no se pidieron los viáticos</b>.</div>`:"";
- document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));
- $("filtro").innerHTML=S.filtro?`<div class="filtro"><span>Mostrando: ${{sem:"esta semana",sin:"viáticos por pedir",pedido:"esperando la plata"}[S.filtro]}</span><button id="qf">Ver todos</button></div>`:"";
- let L=S.tab==="prox"?pend:S.list.filter(t=>t.estado!=="pendiente");
- if(S.tab==="prox"&&S.filtro){L=L.filter(t=>S.filtro==="sem"?dias(t.fecha)>=0&&dias(t.fecha)<=7:S.filtro==="sin"?t.viatico==="sin"&&dias(t.fecha)>=0:t.viatico==="pedido")}
- const q=S.q.trim().toLowerCase();if(q)L=L.filter(t=>(t.interno+" "+t.lugar+" "+(t.especialidad||"")).toLowerCase().includes(q));
- L=[...L].sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));if(S.tab==="pas")L.reverse();
- if(!L.length){$("lista").innerHTML=`<div class="vacio">${S.list.length?"No hay turnos acá.":"Todavía no hay turnos anotados.<br>Tocá <b>＋ Anotar turno</b> para empezar."}</div>`}
- else{
-  let html="",g="";
-  for(const t of L){const n=dias(t.fecha);let gg;
-   if(S.tab==="pas")gg="";else gg=n<0?"Sin cerrar · ¿fue al médico?":n<=0?"Hoy":n===1?"Mañana":n<=7?"Esta semana":"Más adelante";
-   if(gg!==g){html+=gg?`<div class="grp">${gg}</div>`:"";g=gg}
-   const d=pf(t.fecha);
-   html+=`<div class="t${urg(t)?" urg":""}${S.tab==="prox"&&n<0?" viejo":""}" data-id="${esc(t.id)}">
+const LLEVA=["Cédula","Carné de salud","Estudios","Receta","Pasajes"];
+const DCORTO=["dom","lun","mar","mié","jue","vie","sáb"];
+function partes(t){let rep="",lleva=[],libre=[];for(const l of String(t.notas||"").split("\n")){let m;
+ if(m=l.match(/^🔁 Se repite: (.+)$/))rep=m[1].trim();else if(m=l.match(/^Lleva: ?(.*)$/))lleva=m[1].split(",").map(x=>x.trim()).filter(Boolean);else libre.push(l)}
+ return {rep,lleva,libre:libre.join("\n").trim()}}
+function armar(p){return [p.rep?"🔁 Se repite: "+p.rep:"",p.lleva&&p.lleva.length?"Lleva: "+p.lleva.join(", "):"",p.libre||""].filter(Boolean).join("\n")}
+function iso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function sumar(f,rep,k){const d=pf(f);if(rep==="cada semana")d.setDate(d.getDate()+7*k);else if(rep==="cada 15 días")d.setDate(d.getDate()+14*k);
+ else{const dia=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+k);const ult=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();d.setDate(Math.min(dia,ult))}return iso(d)}
+const ord=(a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora);
+function tarjeta(t,conDia){const n=dias(t.fecha),d=pf(t.fecha),p=partes(t);
+ return `<div class="t${urg(t)?" urg":""}${t.estado==="pendiente"&&n<0?" viejo":""}" data-id="${esc(t.id)}">
     <div class="d"><small>${d?DIAS[d.getDay()].slice(0,3):""}</small><b>${d?d.getDate():"?"}</b><small>${d?MES[d.getMonth()]:""}</small></div>
     <div class="i"><div class="n">${esc(t.interno)}</div><div class="s">🕒 ${esc(t.hora||"--:--")} · 📍 ${esc(t.lugar||"sin lugar")}${t.especialidad?" · "+esc(t.especialidad):""}</div>
-    <div class="chips">${S.tab==="prox"&&n>=0&&n<=1?`<span class="chip hoy">${rel(n)}</span>`:S.tab==="prox"&&n>1&&n<7?`<span class="chip pron">${rel(n)}</span>`:""}
+    <div class="chips">${t.estado==="pendiente"&&n>=0&&n<=1?`<span class="chip hoy">${rel(n)}</span>`:t.estado==="pendiente"&&n>1&&n<7?`<span class="chip pron">${rel(n)}</span>`:""}
      ${t.estado==="pendiente"&&!esta(t.interno)?'<span class="chip nofue">Ya no está en la comunidad</span>':""}
      ${t.estado==="fue"?'<span class="chip fue">✔ Fue</span>':t.estado==="nofue"?'<span class="chip nofue">✖ No fue</span>':""}
-     ${t.viatico!=="no"?`<span class="chip ${t.viatico}">${VIA[t.viatico]||""}${t.monto?" · "+plata(t.monto):""}</span>`:""}</div></div></div>`}
-  $("lista").innerHTML=html}
+     ${t.viatico!=="no"?`<span class="chip ${t.viatico}">${VIA[t.viatico]||""}${t.monto?" · "+plata(t.monto):""}</span>`:""}
+     ${p.rep?`<span class="chip rep">🔁 ${esc(p.rep)}</span>`:""}</div></div></div>`}
+function render(){
+ document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===S.vista));
+ $("v-hoy").hidden=S.vista!=="hoy";$("v-otra").hidden=S.vista==="hoy";
+ if(cred)$("nuevo").hidden=S.vista==="plata";
+ if(S.vista==="hoy")vHoy();else $("v-otra").innerHTML={cal:vCal,int:vInt,plata:vPlata}[S.vista]();
  const ints=[...new Set([...S.internos,...S.list.map(t=>t.interno)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es")),lugs=[...new Set(["Ciudad del Plata","San José de Mayo","Montevideo","Libertad",...S.list.map(t=>t.lugar).filter(Boolean)])];
  $("dl-int").innerHTML=ints.map(x=>`<option value="${esc(x)}">`).join("");$("dl-lug").innerHTML=lugs.map(x=>`<option value="${esc(x)}">`).join("");
 }
+function vHoy(){
+ const pend=S.list.filter(t=>t.estado==="pendiente");
+ const h=hoy0();
+ $("semana").innerHTML=[0,1,2,3,4,5,6].map(i=>{const d=new Date(h);d.setDate(d.getDate()+i);const hay=pend.some(t=>dias(t.fecha)===i);
+  return `<button class="dia${i===0?" hoy":""}${hay?" t":""}${S.dia===i?" sel":""}" data-dia="${i}"><small>${DCORTO[d.getDay()]}</small><b>${d.getDate()}</b><i></i></button>`}).join("");
+ const prox=pend.filter(t=>dias(t.fecha)>=0).sort(ord)[0];
+ if(prox){const p=partes(prox),n=dias(prox.fecha);
+  $("hero").innerHTML=`<div class="hero" data-id="${esc(prox.id)}"><small>Próximo médico · ${rel(n)||fLarga(prox)}${prox.hora?" "+esc(prox.hora):""}</small><h4>${esc(prox.interno)}</h4>
+  <p>📍 ${esc(prox.lugar||"sin lugar")}${prox.especialidad?" · "+esc(prox.especialidad):""}${prox.acompana?" · lo lleva "+esc(prox.acompana):""}</p>
+  <div class="chk">${LLEVA.map(x=>{const ok=p.lleva.includes(x);return `<button class="${ok?"ok":""}" data-lleva="${x}" data-tid="${esc(prox.id)}">${ok?"✔":"○"} ${x}</button>`}).join("")}</div></div>`}
+ else $("hero").innerHTML="";
+ const u=pend.filter(urg).sort(ord);
+ $("alerta").innerHTML=u.length?`<div class="alerta">⚠️ ${u.map(t=>`<b>${esc(t.interno)}</b> tiene médico ${rel(dias(t.fecha)).toLowerCase()}`).join(", ")} y <b>todavía no se pidieron los viáticos</b>.</div>`:"";
+ document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));
+ let L=S.tab==="prox"?pend:S.list.filter(t=>t.estado!=="pendiente");
+ if(S.tab==="prox"&&S.dia!==null){L=L.filter(t=>dias(t.fecha)===S.dia);const d=new Date(h);d.setDate(d.getDate()+S.dia);
+  $("filtro").innerHTML=`<div class="filtro"><span>Mostrando: ${DIAS[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}</span><button id="qf">Ver todos</button></div>`}else $("filtro").innerHTML="";
+ const q=S.q.trim().toLowerCase();if(q)L=L.filter(t=>(t.interno+" "+t.lugar+" "+(t.especialidad||"")).toLowerCase().includes(q));
+ L=[...L].sort(ord);if(S.tab==="pas")L.reverse();
+ if(!L.length){$("lista").innerHTML=`<div class="vacio">${S.list.length?(S.dia!==null?"No hay médicos ese día.":"No hay turnos acá."):"Todavía no hay turnos anotados.<br>Tocá <b>＋ Anotar turno</b> para empezar."}</div>`;return}
+ let html="",g="";
+ for(const t of L){const n=dias(t.fecha);const gg=S.tab==="pas"||S.dia!==null?"":n<0?"Sin cerrar · ¿fue al médico?":n<=0?"Hoy":n===1?"Mañana":n<=7?"Esta semana":"Más adelante";
+  if(gg!==g){html+=gg?`<div class="grp">${gg}</div>`:"";g=gg}html+=tarjeta(t)}
+ $("lista").innerHTML=html}
+function vCal(){
+ const m=S.mes||new Date(hoy0().getFullYear(),hoy0().getMonth(),1);S.mes=m;
+ const nombre=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Setiembre","Octubre","Noviembre","Diciembre"][m.getMonth()]+" "+m.getFullYear();
+ const off=(m.getDay()+6)%7,ult=new Date(m.getFullYear(),m.getMonth()+1,0).getDate(),hoyI=iso(hoy0());
+ let cel=["lun","mar","mié","jue","vie","sáb","dom"].map(x=>`<div class="h">${x}</div>`).join("")+'<button class="v"></button>'.repeat(off);
+ for(let d=1;d<=ult;d++){const f=iso(new Date(m.getFullYear(),m.getMonth(),d));const n=S.list.filter(t=>t.fecha===f).length;
+  cel+=`<button data-cdia="${f}" class="${f===hoyI?"hoy":""}${S.calDia===f?" sel":""}"${n?` data-n="${n}"`:""}>${d}</button>`}
+ const pref=iso(m).slice(0,7);let L=S.list.filter(t=>S.calDia?t.fecha===S.calDia:(t.fecha||"").startsWith(pref)).sort(ord);
+ return `<div class="mesh"><button class="ic" data-mes="-1">‹</button><h2>${nombre}</h2><button class="ic" data-mes="1">›</button></div>
+ <div class="mes">${cel}</div>
+ <div class="grp">${S.calDia?`${fLarga({fecha:S.calDia})} · <a data-cdia="${S.calDia}" style="color:var(--acc);cursor:pointer;text-transform:none">ver todo el mes</a>`:"Este mes"}</div>
+ ${L.length?L.map(t=>tarjeta(t)).join(""):`<div class="vacio">${S.calDia?"No hay médicos ese día.":"No hay médicos este mes."}</div>`}`}
+function vInt(){
+ const nombres=[...new Set(S.list.map(t=>t.interno).filter(Boolean))];
+ if(!S.intSel||!nombres.includes(S.intSel)){S.intSel=null;
+  const filas=nombres.map(n=>{const ts=S.list.filter(t=>t.interno===n);const pr=ts.filter(t=>t.estado==="pendiente"&&dias(t.fecha)>=0).sort(ord)[0];return{n,ts,pr}})
+   .sort((a,b)=>(a.pr?a.pr.fecha:"9999").localeCompare(b.pr?b.pr.fecha:"9999")||a.n.localeCompare(b.n,"es"));
+  return `<div class="grp" style="margin-top:0">Internos con médicos anotados</div>`+(filas.length?filas.map(f=>`<div class="t" data-int="${esc(f.n)}"><div class="i"><div class="n">${esc(f.n)}</div><div class="s">${f.ts.length} turno${f.ts.length===1?"":"s"}${f.pr?" · próximo "+fLarga(f.pr):" · sin próximos"}</div></div><span style="color:var(--mut)">›</span></div>`).join(""):`<div class="vacio">Todavía no hay turnos anotados.</div>`)}
+ const ts=S.list.filter(t=>t.interno===S.intSel);
+ const fut=ts.filter(t=>t.estado==="pendiente").sort(ord),pas=ts.filter(t=>t.estado!=="pendiente").sort(ord).reverse();
+ const fam=[...ts].reverse().find(t=>t.familia||t.telefono)||{};
+ const item=t=>{const p=partes(t);return `<div class="${t.estado==="fue"?"f":t.estado==="nofue"?"nf":"p"}" data-id="${esc(t.id)}"><b>${esc(fLarga(t))}${t.hora?" "+esc(t.hora):""} · ${esc(t.especialidad||"Médico")}</b><small>${esc(t.lugar||"")}${t.estado==="fue"?" · Fue":t.estado==="nofue"?" · No fue":""}${p.rep?" · 🔁 "+esc(p.rep):""}${p.libre?"\n"+esc(p.libre):""}</small></div>`};
+ return `<div class="mesh"><button class="ic" data-int="">‹ Todos</button><h2 style="font-size:18px"></h2></div>
+ <div class="ficha"><h3>${esc(S.intSel)}</h3><p>${fam.familia||fam.telefono?"Familiar: "+esc(fam.familia||"")+(fam.telefono?" · "+esc(fam.telefono):""):"Sin familiar anotado"}</p>
+ <div class="kpi"><div><b>${ts.filter(t=>t.estado==="fue").length}</b><span>fue</span></div><div><b>${ts.filter(t=>t.estado==="nofue").length}</b><span>no fue</span></div><div><b>${fut.length}</b><span>pendientes</span></div></div>
+ <div class="lbl">Historial</div><div class="hist">${fut.map(item).join("")}${pas.map(item).join("")||(fut.length?"":"<div>Sin turnos.</div>")}</div></div>`}
+function vPlata(){
+ const todosV=S.list.filter(t=>t.viatico!=="no"&&t.estado==="pendiente");
+ const conV=todosV.filter(t=>dias(t.fecha)<=30),masAde=todosV.length-conV.length;
+ const suma=a=>a.reduce((x,t)=>x+(Number(t.monto)||0),0);
+ const sin=conV.filter(t=>t.viatico==="sin"),ped=conV.filter(t=>t.viatico==="pedido"),rec=conV.filter(t=>t.viatico==="recibido");
+ const nombres=[...new Set(conV.map(t=>t.interno))].sort((a,b)=>a.localeCompare(b,"es"));
+ const card=n=>{const ts=conV.filter(t=>t.interno===n).sort(ord);const fam=[...S.list].reverse().find(t=>t.interno===n&&(t.familia||t.telefono))||{};
+  const r=suma(ts.filter(t=>t.viatico==="recibido")),p=suma(ts.filter(t=>t.viatico==="pedido")),f=suma(ts.filter(t=>t.viatico==="sin"));
+  return `<div class="ficha"><h3>${esc(n)}</h3><p>${fam.familia?"Familiar: "+esc(fam.familia):"Sin familiar anotado"}${fam.telefono?" · "+esc(fam.telefono):""}</p>
+  <div class="cuenta">${ts.map(t=>`<span class="r" data-id="${esc(t.id)}">${esc(fLarga(t))} · ${esc(t.especialidad||"Médico")} <small style="color:var(--mut)">${{sin:"falta pedir",pedido:"pedido",recibido:"recibido"}[t.viatico]||""}</small></span><b class="r" data-id="${esc(t.id)}">${t.monto?plata(t.monto):"sin monto"}</b>`).join("")}
+  <span class="tot" style="color:var(--ok)">Recibido</span><b class="tot" style="color:var(--ok)">${plata(r)||"$ 0"}</b>
+  ${p?`<span style="color:var(--blue)">Pedido, falta que llegue</span><b style="color:var(--blue)">${plata(p)}</b>`:""}
+  ${f?`<span style="color:var(--acc)">Falta pedir</span><b style="color:var(--acc)">${plata(f)}</b>`:""}</div></div>`};
+ return `<div class="kpi" style="margin-top:0"><div><b style="color:var(--acc)">${plata(suma(sin))||"$ 0"}</b><span>falta pedir (${sin.length})</span></div><div><b style="color:var(--blue)">${plata(suma(ped))||"$ 0"}</b><span>esperando (${ped.length})</span></div><div><b style="color:var(--ok)">${plata(suma(rec))||"$ 0"}</b><span>recibido (${rec.length})</span></div></div>
+ <p class="sub" style="color:var(--mut);font-size:13px;margin:8px 2px 10px">Cuentas de los médicos de los próximos 30 días, con el monto de pasajes de cada turno.${masAde?` Hay ${masAde} turno${masAde===1?"":"s"} más adelante.`:""} Tocá un turno para cambiar cómo están los viáticos.</p>
+ ${nombres.length?nombres.map(card).join(""):`<div class="vacio">No hay viáticos pendientes.</div>`}`}
 
 function abrir(h){$("sh").innerHTML=h;$("sheet").classList.add("on");$("sh").scrollTop=0}
-function cerrar(){$("sheet").classList.remove("on")}
+function cerrar(){$("sheet").classList.remove("on");S.prox=null}
 const get=id=>S.list.find(t=>t.id===id);
 
 
-function detalle(id){const t=get(id);if(!t)return cerrar();const n=dias(t.fecha);
- abrir(`<h2>${esc(t.interno)}</h2><p class="sub">${esc(fLarga(t))} · ${esc(t.hora||"--:--")}${t.estado==="pendiente"&&rel(n)?" · "+rel(n):""}</p>
+function detalle(id){const t=get(id);if(!t)return cerrar();const n=dias(t.fecha),p=partes(t);
+ abrir(`<h2>${esc(t.interno)}</h2><p class="sub">${esc(fLarga(t))} · ${esc(t.hora||"--:--")}${t.estado==="pendiente"&&rel(n)?" · "+rel(n):""}${p.rep?" · 🔁 "+esc(p.rep):""}</p>
  <div class="info">
   <div><i>📍</i><span>Dónde</span>${esc(t.lugar||"—")}</div>
   ${t.especialidad?`<div><i>🩺</i><span>Médico</span>${esc(t.especialidad)}</div>`:""}
   ${t.acompana?`<div><i>🧑‍🤝‍🧑</i><span>Lo lleva</span>${esc(t.acompana)}</div>`:""}
   <div><i>👪</i><span>Se le pidió a</span>${esc(t.familia||"—")}${t.telefono?" · "+esc(t.telefono):""}</div>
   <div><i>💵</i><span>Viáticos</span>${t.monto?plata(t.monto):"sin monto"}</div>
-  ${t.notas?`<div><i>📝</i><span>Notas</span>${esc(t.notas)}</div>`:""}
+  ${p.libre?`<div><i>📝</i><span>Notas</span><span style="width:auto;color:var(--ink);white-space:pre-wrap">${esc(p.libre)}</span></div>`:""}
  </div>
+ ${t.estado==="pendiente"?`<div class="lbl">Qué tiene que llevar</div><div class="chk" style="margin-top:0">${LLEVA.map(x=>{const ok=p.lleva.includes(x);return `<button class="${ok?"ok":""}" data-lleva="${x}" data-tid="${esc(t.id)}">${ok?"✔":"○"} ${x}</button>`}).join("")}</div>`:""}
  <div class="lbl">Viáticos</div>
  <div class="btns">${["sin","pedido","recibido","no"].map(v=>`<button class="b${t.viatico===v?" sel":""}" data-via="${v}">${VIA[v]}</button>`).join("")}</div>
  <div class="lbl">¿Cómo salió?</div>
  <div class="btns">${t.estado==="pendiente"?`<button class="b" data-est="fue">✔ Fue al médico</button><button class="b" data-est="nofue">✖ No fue</button>`:`<button class="b full" data-est="pendiente">↩ Volver a próximos</button>`}</div>
+ ${S.prox===id&&t.estado==="fue"?`<div class="prox"><b>¿Le dieron otra fecha?</b><p class="sub" style="margin:2px 0 8px">${p.rep&&yaHay(t.interno,sumar(t.fecha,p.rep,1))?"Este control se repite y el próximo ya está anotado. Podés dejar la fecha vacía y anotar solo lo que dijo el médico.":"Se copian el lugar, el médico, quién lo lleva y la familia. Solo poné el día."}</p>
+  <div class="row"><label class="f"><span>Fecha</span><input type="date" id="px_fecha" value="${p.rep&&!yaHay(t.interno,sumar(t.fecha,p.rep,1))?sumar(t.fecha,p.rep,1):""}"></label><label class="f"><span>Hora</span><input type="time" id="px_hora" value="${esc(t.hora)}"></label></div>
+  <label class="f"><span>¿Qué dijo el médico? (opcional)</span><textarea id="px_nota" placeholder="Ej: le cambiaron la medicación, pidió estudios…"></textarea></label>
+  <div class="btns"><button class="b" data-act="noprox">No, por ahora no</button><button class="b p" data-act="siprox">Guardar</button></div></div>`:""}
  <div class="lbl">Más</div>
- <div class="btns"><button class="b" data-act="editar">✏️ Cambiar datos / fecha</button>${S.rol==="Admin"?'<button class="b red" data-act="borrar">🗑 Borrar turno</button>':""}<button class="b full" data-act="cerrar">Cerrar</button></div>`);
+ <div class="btns"><button class="b" data-act="editar">✏️ Cambiar datos / fecha</button><button class="b" data-act="verint">👤 Ver su historial</button>${S.rol==="Admin"?'<button class="b red" data-act="borrar">🗑 Borrar turno</button>':""}<button class="b${S.rol==="Admin"?"":" full"}" data-act="cerrar">Cerrar</button></div>`);
  $("sh").dataset.id=id}
+function yaHay(interno,fecha){return S.list.some(x=>x.interno===interno&&x.fecha===fecha&&x.estado==="pendiente")}
+async function guardarProx(id){const t=get(id);if(!t)return;const p=partes(t);
+ const fecha=$("px_fecha").value,hora=$("px_hora").value,nt=$("px_nota").value.trim();
+ if(!fecha&&!nt){S.prox=null;detalle(id);return}
+ const b=document.querySelector('[data-act="siprox"]');if(b){b.disabled=true;b.textContent="Guardando…"}
+ if(nt){p.libre=(p.libre?p.libre+"\n":"")+"Resultado "+fLarga(t)+": "+nt;const ok=await guardar(id,Object.assign({},t,{notas:armar(p)}));if(!ok){if(b){b.disabled=false;b.textContent="Guardar"}return}}
+ S.prox=null;
+ if(fecha&&yaHay(t.interno,fecha)){toast("Ya tenía un turno anotado ese día");detalle(id);return}
+ if(fecha){const nuevo={interno:t.interno,fecha,hora,lugar:t.lugar,especialidad:t.especialidad,acompana:t.acompana,monto:t.monto,telefono:t.telefono,familia:t.familia,
+   notas:armar({rep:p.rep,lleva:[],libre:""}),viatico:t.viatico==="no"?"no":"sin",estado:"pendiente"};
+  const nid=await guardar(null,nuevo);if(nid){toast("📅 Próximo control anotado");detalle(nid)}}
+ else{toast("Guardado");detalle(id)}}
+async function toggleLleva(tid,x,abierto){const t=get(tid);if(!t)return;const p=partes(t);
+ p.lleva=p.lleva.includes(x)?p.lleva.filter(y=>y!==x):LLEVA.filter(y=>y===x||p.lleva.includes(y));
+ await cambiar(tid,{notas:armar(p)},!abierto)}
 
-function form(t){const e=t||{viatico:"sin"};
+function form(t){const e=t||{viatico:"sin"};const pe=partes(e);let repSel="";
  abrir(`<h2>${t?"Cambiar turno":"Anotar turno"}</h2><p class="sub">Lo que es obligatorio: interno y fecha.</p>
  <form id="fm">
  <label class="f"><span>Interno</span><input id="f_interno" list="dl-int" value="${esc(e.interno)}" placeholder="Escribí y elegí de la lista" autocomplete="off" required><small style="display:block;color:var(--mut);font-size:12px;margin-top:4px">${S.internos.length} internos, tomados de la app de Internos. Si es uno nuevo, escribilo igual.</small></label>
@@ -173,19 +283,28 @@ function form(t){const e=t||{viatico:"sin"};
  <div class="row"><label class="f"><span>Monto de los pasajes</span><input id="f_monto" inputmode="numeric" value="${esc(e.monto)}" placeholder="$"></label><label class="f"><span>Teléfono de la familia</span><input id="f_tel" inputmode="tel" value="${esc(e.telefono)}" placeholder="09…"></label></div>
  <label class="f"><span>Familiar con quien se habló</span><input id="f_fam" value="${esc(e.familia)}" placeholder="Ej: María (madre)"></label>
  <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="f_nov" ${e.viatico==="no"?"checked":""} style="width:auto"><span style="margin:0">No precisa viáticos</span></label>
- <label class="f"><span>Notas (opcional)</span><textarea id="f_notas" placeholder="Ej: ir en ayunas, llevar carné…">${esc(e.notas)}</textarea></label>
+ <label class="f"><span>Notas (opcional)</span><textarea id="f_notas" placeholder="Ej: ir en ayunas, llevar carné…">${esc(pe.libre)}</textarea></label>
+ ${t?"":`<div class="lbl">¿Se repite?</div><div class="btns" id="f_rep">${["No se repite","cada semana","cada 15 días","cada mes"].map((x,i)=>`<button type="button" class="b${i===0?" sel":""}" data-r="${i?x:""}">${i?"🔁 "+x[0].toUpperCase()+x.slice(1):x}</button>`).join("")}</div><p class="sub" style="margin-top:6px">Si se repite, se anotan solos los próximos turnos (3 meses). Si alguno cambia, lo cambiás solo a ese.</p>`}
  <div class="btns"><button type="button" class="b" data-act="${t?"volver":"cerrar"}">Cancelar</button><button class="b p" type="submit">Guardar</button></div>
  </form>`);
  $("sh").dataset.id=t?t.id:"";
+ if(!t)$("f_rep").addEventListener("click",ev=>{const b=ev.target.closest("[data-r]");if(!b)return;repSel=b.dataset.r;$("f_rep").querySelectorAll(".b").forEach(x=>x.classList.toggle("sel",x===b))});
  $("f_interno").addEventListener("change",()=>{if(t)return;const v=$("f_interno").value.trim().toLowerCase();const prev=[...S.list].reverse().find(x=>(x.interno||"").toLowerCase()===v);
   if(prev){if(!$("f_fam").value)$("f_fam").value=prev.familia||"";if(!$("f_tel").value)$("f_tel").value=prev.telefono||""}});
  $("fm").addEventListener("submit",async ev=>{ev.preventDefault();
   const body={interno:$("f_interno").value.trim(),fecha:$("f_fecha").value,hora:$("f_hora").value,lugar:$("f_lugar").value.trim(),especialidad:$("f_esp").value.trim(),acompana:$("f_acomp").value.trim(),
-   monto:$("f_monto").value.replace(/\D/g,""),telefono:$("f_tel").value.trim(),familia:$("f_fam").value.trim(),notas:$("f_notas").value.trim(),
+   monto:$("f_monto").value.replace(/\D/g,""),telefono:$("f_tel").value.trim(),familia:$("f_fam").value.trim(),notas:armar({rep:t?pe.rep:repSel,lleva:pe.lleva,libre:$("f_notas").value.trim()}),
    viatico:$("f_nov").checked?"no":(e.viatico==="no"?"sin":e.viatico||"sin"),estado:e.estado||"pendiente",creado:e.creado||new Date().toISOString()};
   if(!body.interno||!body.fecha){toast("Falta el interno o la fecha");return}
   const id=await guardar(t?t.id:null,body);
-  if(id){toast(t?"Turno actualizado":"Turno anotado ✔");detalle(id)}})}
+  if(!id)return;
+  if(!t&&repSel){const n=repSel==="cada mes"?3:repSel==="cada 15 días"?6:12;let hechos=1;
+   const btn=document.querySelector("#fm button[type=submit]");
+   for(let k=1;k<=n;k++){if(btn){btn.disabled=true;btn.textContent=`Anotando ${k+1} de ${n+1}…`}
+    const ok=await guardar(null,Object.assign({},body,{fecha:sumar(body.fecha,repSel,k)}));if(ok)hechos++}
+   toast(`Turno anotado · se repite ${repSel} (${hechos} turnos)`)}
+  else toast(t?"Turno actualizado":"Turno anotado ✔");
+  detalle(id)})}
 
 async function api(accion,extra){
  if(!API||API.indexOf("http")!==0)throw new Error("Falta poner la URL del Apps Script en el archivo.");
@@ -207,15 +326,15 @@ async function guardar(id,body){
   const o=Object.assign({},body,{id:r.id});const k=S.list.findIndex(x=>x.id===r.id);k<0?S.list.push(o):S.list[k]=o;render();cargar(true);return r.id}
  catch(e){toast("No se pudo guardar. Revisá internet.");return null}
  finally{if(btn){btn.disabled=false;btn.textContent="Guardar"}}}
-async function cambiar(id,campos){const t=get(id);if(!t)return;
- const prev=Object.assign({},t);Object.assign(t,campos);render();detalle(id);
- const ok=await guardar(id,t);if(!ok){Object.assign(t,prev);render();detalle(id)}}
+async function cambiar(id,campos,sinDetalle){const t=get(id);if(!t)return;
+ const prev=Object.assign({},t);Object.assign(t,campos);render();if(!sinDetalle)detalle(id);
+ const ok=await guardar(id,t);if(!ok){Object.assign(t,prev);render();if(!sinDetalle)detalle(id)}}
 async function borrar(id){
  try{const r=await api("borrar",{id});if(!r.ok){toast(r.error||"No se pudo borrar");return}
   S.list=S.list.filter(t=>t.id!==id);render();cerrar();toast("Turno borrado")}catch(e){toast("No se pudo borrar. Revisá internet.")}}
 
 /* ---------- Entrar / salir ---------- */
-function pantallaLogin(on){$("login").hidden=!on;document.querySelector(".app").hidden=on;$("nuevo").hidden=on}
+function pantallaLogin(on){$("login").hidden=!on;document.querySelector(".app").hidden=on;$("nuevo").hidden=on;$("nav").hidden=on}
 function salir(){cred=null;ls.del("med_cred");S.list=[];pantallaLogin(true)}
 $("lform").addEventListener("submit",async ev=>{ev.preventDefault();
  const correo=$("lcorreo").value.trim().toLowerCase(),clave=$("lclave").value;$("lerr").textContent="";
@@ -228,15 +347,22 @@ $("lform").addEventListener("submit",async ev=>{ev.preventDefault();
  finally{b.disabled=false;b.textContent="Entrar"}});
 
 document.addEventListener("click",ev=>{
- const el=ev.target.closest("[data-tab],[data-f],#qf,.t[data-id],#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
+ const el=ev.target.closest("[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id],#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
+ if(el.closest("#fm")&&!el.dataset.act)return;
+ if(el.dataset.lleva){toggleLleva(el.dataset.tid,el.dataset.lleva,$("sheet").classList.contains("on"));return}
+ if(el.dataset.v){S.vista=el.dataset.v;S.dia=null;if(el.dataset.v!=="int")S.intSel=null;cerrar();render();window.scrollTo(0,0);return}
+ if(el.dataset.dia!==undefined){const d=+el.dataset.dia;S.dia=S.dia===d?null:d;S.tab="prox";render();return}
+ if(el.dataset.cdia){S.calDia=S.calDia===el.dataset.cdia?null:el.dataset.cdia;render();return}
+ if(el.dataset.mes){const m=S.mes;S.mes=new Date(m.getFullYear(),m.getMonth()+(+el.dataset.mes),1);S.calDia=null;render();return}
+ if(el.dataset.int!==undefined){S.intSel=el.dataset.int||null;render();window.scrollTo(0,0);return}
  if(el.dataset.tab){S.tab=el.dataset.tab;S.filtro=null;render();return}
  if(el.dataset.f){S.tab="prox";S.filtro=S.filtro===el.dataset.f?null:el.dataset.f;render();return}
- if(el.id==="qf"){S.filtro=null;render();return}
+ if(el.id==="qf"){S.filtro=null;S.dia=null;render();return}
  if(el.id==="nuevo"){form();return}
- if(el.classList.contains("t")){detalle(el.dataset.id);return}
+ if(el.dataset.id){S.prox=null;detalle(el.dataset.id);return}
  const id=$("sh").dataset.id;
  if(el.dataset.via){cambiar(id,{viatico:el.dataset.via});return}
- if(el.dataset.est){cambiar(id,{estado:el.dataset.est});return}
+ if(el.dataset.est){S.prox=el.dataset.est==="fue"?id:null;cambiar(id,{estado:el.dataset.est});return}
  const a=el.dataset.act;
  if(a==="cerrar")cerrar();
  else if(a==="volver")detalle(id);
@@ -246,6 +372,9 @@ document.addEventListener("click",ev=>{
  else if(a==="salir")salir();
  else if(a==="recargar"){toast("Actualizando…");cargar()}
  else if(a==="avisos")panelAvisos();
+ else if(a==="noprox"){S.prox=null;detalle(id)}
+ else if(a==="siprox")guardarProx(id);
+ else if(a==="verint"){const t=get(id);cerrar();S.vista="int";S.intSel=t?t.interno:null;render();window.scrollTo(0,0)}
  else if(a==="activar")activarAvisos();
  else if(a==="probar")probarAviso();
  else if(a==="apagar")apagarAvisos();
