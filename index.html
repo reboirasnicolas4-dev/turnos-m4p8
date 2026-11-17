@@ -65,6 +65,14 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 .hero small{color:var(--acc);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.hero h4{margin:3px 0 2px;font:700 20px Fraunces,serif}.hero p{margin:0;color:#e4dacb;font-size:14px}
 .chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.chk button{font:inherit;font-size:12.5px;padding:5px 10px;border-radius:99px;background:#0006;border:1px solid var(--line);color:var(--mut);cursor:pointer}.chk button.ok{border-color:var(--ok);color:var(--ok)}
 .chip.rep{color:#d4b5e8;border-color:#4a3a55}
+.tar{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 12px 6px;margin-bottom:12px}
+.tar h3{margin:0 0 8px;font:700 18px Fraunces,serif;display:flex;align-items:center;gap:8px}.tar h3 span{font:700 12px "Hanken Grotesk";background:var(--acc);color:var(--accx);border-radius:99px;padding:2px 8px}
+.tr{display:flex;gap:9px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:14px}.tr:first-of-type{border-top:0}
+.tr .x{flex:1;min-width:0}.tr.rojo .x b{color:var(--red)}.tr .x small{display:block;color:var(--mut)}
+.tr .bb{display:flex;gap:5px;flex:none}.tr button{font:600 12.5px inherit;padding:7px 10px;border-radius:10px;border:1px solid var(--acc);background:var(--soft);color:var(--acc);cursor:pointer;white-space:nowrap}
+.tr.tjun{color:var(--blue)}.tar .ok{color:var(--ok);padding:4px 0 8px;font-size:14px}
+.qk{display:flex;flex-wrap:wrap;gap:5px;margin:-4px 0 10px}.qk button{font:inherit;font-size:12.5px;padding:4px 9px;border-radius:99px;background:var(--card2);border:1px solid var(--line);color:var(--mut);cursor:pointer}
+.pase{white-space:pre-wrap;background:var(--card2);border-radius:12px;padding:11px;font-size:13.5px;max-height:50vh;overflow:auto}
 .hplata{margin-top:11px;padding-top:10px;border-top:1px solid #ffffff1a}.hpt{font-weight:700;font-size:14px;margin-bottom:7px}.hpt .hfam{color:var(--mut);font-weight:500}
 .hero .chip{font-size:11.5px}.hero p.hnot{white-space:pre-wrap;margin-top:4px;font-size:13.5px;color:var(--mut)}
 .chk.hvi{margin-top:6px;align-items:center}.hpl{font-size:12.5px;font-weight:700;color:var(--ink);margin-right:2px}
@@ -98,9 +106,10 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
  <div id="lerr" class="lerr"></div><button class="b p" id="lbtn" style="width:100%">Entrar</button>
  <p class="lnota">La primera vez que entrás, la contraseña que escribas queda como la tuya. Si tu correo no tiene acceso, pedile a un Admin que te agregue.</p></form></div>
 <div class="app">
- <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small></div><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
+ <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small></div><button class="ic" data-act="pase" title="Pase de guardia">📋</button><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
  <div id="nota" class="nota" hidden></div>
  <div id="v-hoy">
+ <div id="tareas"></div>
  <div class="semana" id="semana"></div>
  <div id="hero"></div>
  <div id="alerta"></div>
@@ -142,10 +151,29 @@ function nota(m){const e=$("nota");if(m){e.textContent=m;e.hidden=false}else e.h
 
 const LLEVA=["Cédula","Carné de salud","Estudios","Receta"];
 const DCORTO=["dom","lun","mar","mié","jue","vie","sáb"];
-function partes(t){let rep="",lleva=[],libre=[];for(const l of String(t.notas||"").split("\n")){let m;
- if(m=l.match(/^🔁 Se repite: (.+)$/))rep=m[1].trim();else if(m=l.match(/^Lleva: ?(.*)$/))lleva=m[1].split(",").map(x=>x.trim()).filter(Boolean);else libre.push(l)}
- return {rep,lleva,libre:libre.join("\n").trim()}}
-function armar(p){return [p.rep?"🔁 Se repite: "+p.rep:"",p.lleva&&p.lleva.length?"Lleva: "+p.lleva.join(", "):"",p.libre||""].filter(Boolean).join("\n")}
+function partes(t){let rep="",lleva=[],libre=[],medio="",sale="";for(const l of String(t.notas||"").split("\n")){let m;
+ if(m=l.match(/^🔁 Se repite: (.+)$/))rep=m[1].trim();else if(m=l.match(/^Lleva: ?(.*)$/))lleva=m[1].split(",").map(x=>x.trim()).filter(Boolean);
+ else if(m=l.match(/^🚐 Va en: (.+)$/))medio=m[1].trim();else if(m=l.match(/^🕒 Sale: (.+)$/))sale=m[1].trim();else libre.push(l)}
+ return {rep,lleva,libre:libre.join("\n").trim(),medio,sale}}
+function armar(p){return [p.rep?"🔁 Se repite: "+p.rep:"",p.medio?"🚐 Va en: "+p.medio:"",p.sale?"🕒 Sale: "+p.sale:"",p.lleva&&p.lleva.length?"Lleva: "+p.lleva.join(", "):"",p.libre||""].filter(Boolean).join("\n")}
+const MEDIOS=["camioneta","ómnibus","otro"];
+const ICMED={camioneta:"🚐",ómnibus:"🚌",otro:"🚗"};
+function viajeOk(t){const p=partes(t);return !!(t.acompana&&p.medio)}
+function papelesFaltan(t){const p=partes(t);return LLEVA.filter(x=>!p.lleva.includes(x))}
+function ahoraHM(){const d=new Date();return d.getHours()*60+d.getMinutes()}
+/* ---------- Para hacer hoy: tareas que salen solas de los turnos ---------- */
+function tareas(){const T=[],pend=S.list.filter(t=>t.estado==="pendiente");
+ for(const t of pend){const n=dias(t.fecha),nom=esc(t.interno),cu=n===0?"hoy":n===1?"mañana":n>1?`en ${n} días`:"";
+  if(n<0||(n===0&&ahoraHM()>=17*60)){T.push({ord:0,rojo:n<0,id:t.id,txt:`✔ <b>¿Fue ${nom} al médico?</b> ${n<0?"Era el "+esc(fLarga(t)):"Era hoy"}. Anotá cómo salió.`,btn:[["fue","Fue"],["nofue","No fue"]]});continue}
+  if(t.viatico==="sin"&&n<=5)T.push({ord:1,rojo:n<=3,id:t.id,txt:`💸 <b>Pedir la plata</b> a la familia de ${nom}${t.monto?" ("+plata(t.monto)+")":""}${t.familia?" · "+esc(t.familia)+(t.telefono?" "+esc(t.telefono):""):""}. Médico ${cu}.`,btn:[["pedida","Ya la pedí"]]});
+  if(t.viatico==="pedido"&&n<=2)T.push({ord:2,rojo:n<=1,id:t.id,txt:`⏳ <b>Confirmar que llegue la plata</b> de ${nom}${t.monto?" ("+plata(t.monto)+")":""}. Médico ${cu}.`,btn:[["pagada","Ya llegó"]]});
+  if(n<=3&&!viajeOk(t)){const p=partes(t),f=[!t.acompana?"quién lo lleva":"",!p.medio?"cómo va":""].filter(Boolean).join(" y ");
+   T.push({ord:3,rojo:n<=1,id:t.id,txt:`🚐 <b>Organizar el viaje</b> de ${nom}: falta ${f}. Médico ${cu}.`,btn:[["viaje","Organizar"]]})}
+  if(n<=1){const f=papelesFaltan(t);if(f.length)T.push({ord:4,rojo:n===0,id:t.id,txt:`🪪 <b>Preparar los papeles</b> de ${nom}: ${f.join(", ")}. Médico ${cu}.`,btn:[["papeles","Listo"]]})}}
+ return T.sort((a,b)=>b.rojo-a.rojo||a.ord-b.ord)}
+function juntos(){const pend=S.list.filter(t=>t.estado==="pendiente"&&dias(t.fecha)>=0&&dias(t.fecha)<=7),g={};
+ for(const t of pend){const k=t.fecha+"|"+String(t.lugar||"").trim().toLowerCase();if(!t.lugar)continue;(g[k]=g[k]||[]).push(t)}
+ return Object.values(g).filter(a=>a.length>1)}
 function iso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function sumar(f,rep,k){const d=pf(f);if(rep==="cada semana")d.setDate(d.getDate()+7*k);else if(rep==="cada 15 días")d.setDate(d.getDate()+14*k);
  else{const dia=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+k);const ult=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();d.setDate(Math.min(dia,ult))}return iso(d)}
@@ -158,6 +186,7 @@ function tarjeta(t,conDia){const n=dias(t.fecha),d=pf(t.fecha),p=partes(t);
      ${t.estado==="pendiente"&&!esta(t.interno)?'<span class="chip nofue">Ya no está en la comunidad</span>':""}
      ${t.estado==="fue"?'<span class="chip fue">✔ Fue</span>':t.estado==="nofue"?'<span class="chip nofue">✖ No fue</span>':""}
      ${t.viatico!=="no"?`<span class="chip ${t.viatico}">${VIA[t.viatico]||""}${t.monto?" · "+plata(t.monto):""}</span>`:""}
+     ${p.medio?`<span class="chip">${ICMED[p.medio]} ${esc(p.medio)}${p.sale?" "+esc(p.sale):""}</span>`:""}
      ${p.rep?`<span class="chip rep">🔁 ${esc(p.rep)}</span>`:""}</div></div></div>`}
 function render(){
  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===S.vista));
@@ -170,12 +199,18 @@ function render(){
 function vHoy(){
  const pend=S.list.filter(t=>t.estado==="pendiente");
  const h=hoy0();
+ const TT=tareas(),JJ=juntos();
+ $("tareas").innerHTML=`<div class="tar"><h3>📋 Para hacer hoy${TT.length?`<span>${TT.length}</span>`:""}</h3>
+  ${TT.map(x=>`<div class="tr${x.rojo?" rojo":""}"><div class="x" data-id="${esc(x.id)}">${x.txt}</div><div class="bb">${x.btn.map(([a,l])=>`<button data-tarea="${a}" data-tid="${esc(x.id)}">${l}</button>`).join("")}</div></div>`).join("")}
+  ${JJ.map(a=>`<div class="tr tjun"><div class="x">🚐 <b>${a.map(t=>esc(t.interno)).join(" y ")}</b> tienen médico el mismo día (${esc(fLarga(a[0]))}) en ${esc(a[0].lugar)}. Pueden ir juntos en la camioneta.</div></div>`).join("")}
+  ${!TT.length&&!JJ.length?`<div class="ok">✅ Nada pendiente de médicos por ahora.</div>`:""}</div>`;
  $("semana").innerHTML=[0,1,2,3,4,5,6].map(i=>{const d=new Date(h);d.setDate(d.getDate()+i);const hay=pend.some(t=>dias(t.fecha)===i);
   return `<button class="dia${i===0?" hoy":""}${hay?" t":""}${S.dia===i?" sel":""}" data-dia="${i}"><small>${DCORTO[d.getDay()]}</small><b>${d.getDate()}</b><i></i></button>`}).join("");
  const prox=pend.filter(t=>dias(t.fecha)>=0).sort(ord)[0];
  if(prox){const p=partes(prox),n=dias(prox.fecha);
   $("hero").innerHTML=`<div class="hero" data-id="${esc(prox.id)}"><small>Próximo médico · ${rel(n)||fLarga(prox)}${prox.hora?" "+esc(prox.hora):""}</small><h4>${esc(prox.interno)}</h4>
-  <p>📍 ${esc(prox.lugar||"sin lugar")}${prox.especialidad?" · "+esc(prox.especialidad):""}${prox.acompana?" · lo lleva "+esc(prox.acompana):""}${p.rep?` <span class="chip rep">🔁 ${esc(p.rep)}</span>`:""}</p>
+  <p>📍 ${esc(prox.lugar||"sin lugar")}${prox.especialidad?" · "+esc(prox.especialidad):""}${p.rep?` <span class="chip rep">🔁 ${esc(p.rep)}</span>`:""}</p>
+  <p>${p.medio?ICMED[p.medio]+" En "+esc(p.medio):"🚐 <span style='color:var(--acc)'>Falta ver cómo va</span>"}${p.sale?" · sale "+esc(p.sale):""} · ${prox.acompana?"lo lleva "+esc(prox.acompana):"<span style='color:var(--acc)'>falta quién lo lleva</span>"}</p>
   ${p.libre?`<p class="hnot">📝 ${esc(p.libre)}</p>`:""}
   <div class="chk">${LLEVA.map(x=>{const ok=p.lleva.includes(x);return `<button class="${ok?"ok":""}" data-lleva="${x}" data-tid="${esc(prox.id)}">${ok?"✔":"○"} ${x}</button>`}).join("")}</div>
   <div class="chk hvi">${prox.viatico==="no"?`<span class="vchip">💵 No precisa viáticos</span>`:`<span class="vchip v-${prox.viatico}">${{sin:"💸 Falta pedir la plata",pedido:"⏳ Plata pedida",recibido:"✅ Plata pagada"}[prox.viatico]||""}${prox.monto?" · "+plata(prox.monto):""}</span>`}</div></div>`}
@@ -237,7 +272,7 @@ function vPlata(){
  ${nombres.length?nombres.map(card).join(""):`<div class="vacio">No hay viáticos pendientes.</div>`}`}
 
 function abrir(h){$("sh").innerHTML=h;$("sheet").classList.add("on");$("sh").scrollTop=0}
-function cerrar(){$("sheet").classList.remove("on");S.prox=null}
+function cerrar(){$("sheet").classList.remove("on");S.prox=null;$("sh").onclick=null}
 const get=id=>S.list.find(t=>t.id===id);
 
 
@@ -246,7 +281,8 @@ function detalle(id){const t=get(id);if(!t)return cerrar();const n=dias(t.fecha)
  <div class="info">
   <div><i>📍</i><span>Dónde</span>${esc(t.lugar||"—")}</div>
   ${t.especialidad?`<div><i>🩺</i><span>Médico</span>${esc(t.especialidad)}</div>`:""}
-  ${t.acompana?`<div><i>🧑‍🤝‍🧑</i><span>Lo lleva</span>${esc(t.acompana)}</div>`:""}
+  <div><i>🧑‍🤝‍🧑</i><span>Lo lleva</span>${t.acompana?esc(t.acompana):"<span style='width:auto;color:var(--acc)'>Falta decidir</span>"}</div>
+  <div><i>${p.medio?ICMED[p.medio]:"🚐"}</i><span>Cómo va</span>${p.medio?esc(p.medio[0].toUpperCase()+p.medio.slice(1)):"<span style='width:auto;color:var(--acc)'>Falta decidir</span>"}${p.sale?" · sale "+esc(p.sale):""}</div>
   <div><i>👪</i><span>Se le pidió a</span>${esc(t.familia||"—")}${t.telefono?" · "+esc(t.telefono):""}</div>
   <div><i>💵</i><span>Se pide</span>${t.monto?plata(t.monto):"sin monto"}</div>
   ${p.libre?`<div><i>📝</i><span>Notas</span><span style="width:auto;color:var(--ink);white-space:pre-wrap">${esc(p.libre)}</span></div>`:""}
@@ -261,7 +297,7 @@ function detalle(id){const t=get(id);if(!t)return cerrar();const n=dias(t.fecha)
   <label class="f"><span>¿Qué dijo el médico? (opcional)</span><textarea id="px_nota" placeholder="Ej: le cambiaron la medicación, pidió estudios…"></textarea></label>
   <div class="btns"><button class="b" data-act="noprox">No, por ahora no</button><button class="b p" data-act="siprox">Guardar</button></div></div>`:""}
  <div class="lbl">Más</div>
- <div class="btns"><button class="b" data-act="editar">✏️ Cambiar datos / fecha</button><button class="b" data-act="verint">👤 Ver su historial</button>${S.rol==="Admin"?'<button class="b red" data-act="borrar">🗑 Borrar turno</button>':""}<button class="b${S.rol==="Admin"?"":" full"}" data-act="cerrar">Cerrar</button></div>`);
+ <div class="btns"><button class="b" data-act="editar">✏️ Cambiar datos / fecha</button><button class="b" data-act="viaje">🚐 Organizar el viaje</button><button class="b" data-act="verint">👤 Ver su historial</button>${S.rol==="Admin"?'<button class="b red" data-act="borrar">🗑 Borrar turno</button>':""}<button class="b${S.rol==="Admin"?"":" full"}" data-act="cerrar">Cerrar</button></div>`);
  $("sh").dataset.id=id}
 function yaHay(interno,fecha){return S.list.some(x=>x.interno===interno&&x.fecha===fecha&&x.estado==="pendiente")}
 async function guardarProx(id){const t=get(id);if(!t)return;const p=partes(t);
@@ -272,21 +308,61 @@ async function guardarProx(id){const t=get(id);if(!t)return;const p=partes(t);
  S.prox=null;
  if(fecha&&yaHay(t.interno,fecha)){toast("Ya tenía un turno anotado ese día");detalle(id);return}
  if(fecha){const nuevo={interno:t.interno,fecha,hora,lugar:t.lugar,especialidad:t.especialidad,acompana:t.acompana,monto:t.monto,telefono:t.telefono,familia:t.familia,
-   notas:armar({rep:p.rep,lleva:[],libre:""}),viatico:t.viatico==="no"?"no":"sin",estado:"pendiente"};
+   notas:armar({rep:p.rep,lleva:[],libre:"",medio:p.medio,sale:""}),viatico:t.viatico==="no"?"no":"sin",estado:"pendiente"};
   const nid=await guardar(null,nuevo);if(nid){toast("📅 Próximo control anotado");detalle(nid)}}
  else{toast("Guardado");detalle(id)}}
+function viajeForm(id){const t=get(id);if(!t)return;const p=partes(t);let med=p.medio||"";
+ const prev=[...new Set(S.list.map(x=>String(x.acompana||"").trim()).filter(Boolean))].slice(0,6);
+ abrir(`<h2>🚐 Viaje de ${esc(t.interno)}</h2><p class="sub">${esc(fLarga(t))} · ${esc(t.hora||"--:--")} · ${esc(t.lugar||"")}</p>
+ <label class="f"><span>Quién lo lleva</span><input id="v_acomp" value="${esc(t.acompana)}" placeholder="Ej: Nico"></label>
+ ${prev.length?`<div class="qk">${prev.map(v=>`<button type="button" data-vq="${esc(v)}">${esc(v)}</button>`).join("")}</div>`:""}
+ <div class="lbl">Cómo va</div><div class="btns" id="v_med" style="grid-template-columns:repeat(3,1fr)">${MEDIOS.map(m=>`<button type="button" class="b${med===m?" sel":""}" data-vm="${m}">${ICMED[m]} ${m[0].toUpperCase()+m.slice(1)}</button>`).join("")}</div>
+ <label class="f" style="margin-top:10px"><span>Sale a las (opcional)</span><input type="time" id="v_sale" value="${esc(p.sale)}"></label>
+ <div class="btns"><button class="b" data-act="volver">Cancelar</button><button class="b p" data-act="vguardar">Guardar</button></div>`);
+ $("sh").dataset.id=id;
+ $("sh").onclick=ev=>{const q=ev.target.closest("[data-vq]");if(q){$("v_acomp").value=q.dataset.vq;return}
+  const b=ev.target.closest("[data-vm]");if(b){med=med===b.dataset.vm?"":b.dataset.vm;$("v_med").querySelectorAll(".b").forEach(x=>x.classList.toggle("sel",x.dataset.vm===med));$("sh").dataset.med=med}};
+ $("sh").dataset.med=med}
+async function guardarViaje(id){const t=get(id);if(!t)return;const p=partes(t);p.medio=$("sh").dataset.med||"";p.sale=$("v_sale").value;
+ $("sh").onclick=null;await cambiar(id,{acompana:$("v_acomp").value.trim(),notas:armar(p)});toast("🚐 Viaje guardado")}
+function textoPase(){const h=hoy0(),L=S.list.filter(t=>t.estado==="pendiente"&&dias(t.fecha)>=0&&dias(t.fecha)<=8).sort(ord);
+ const fin=new Date(h);fin.setDate(fin.getDate()+8);
+ let tx=`📋 MÉDICOS · del ${h.getDate()}/${h.getMonth()+1} al ${fin.getDate()}/${fin.getMonth()+1}\n`;
+ if(!L.length)return tx+"\nNo hay médicos anotados.";
+ for(const t of L){const p=partes(t),f=papelesFaltan(t);
+  tx+=`\n• ${fLarga(t)} ${t.hora||""} — ${t.interno}\n  📍 ${t.lugar||"sin lugar"}${t.especialidad?" · "+t.especialidad:""}\n  ${p.medio?ICMED[p.medio]+" "+p.medio:"🚐 falta ver cómo va"}${p.sale?" · sale "+p.sale:""} · ${t.acompana?"lo lleva "+t.acompana:"FALTA quién lo lleva"}\n  💵 ${t.viatico==="no"?"no precisa":{sin:"FALTA PEDIR la plata",pedido:"plata pedida, falta que llegue",recibido:"plata pagada"}[t.viatico]}${t.monto&&t.viatico!=="no"?" ("+plata(t.monto)+")":""}${t.familia?" · "+t.familia+(t.telefono?" "+t.telefono:""):""}\n  🪪 ${f.length?"Falta: "+f.join(", "):"Papeles listos"}${p.libre?"\n  📝 "+p.libre.replace(/\n/g," / "):""}\n`}
+ return tx}
+function pase(){const tx=textoPase();
+ abrir(`<h2>📋 Pase de guardia</h2><p class="sub">Los médicos de los próximos 8 días y lo que falta de cada uno, para el compañero que entra.</p>
+ <div class="pase" id="pasetx">${esc(tx)}</div>
+ <div class="btns" style="margin-top:10px"><button class="b p" data-act="copiarpase">📋 Copiar</button><button class="b" data-act="cerrar">Cerrar</button></div>`);$("sh").dataset.id=""}
+async function hacerTarea(a,id){const t=get(id);if(!t)return;
+ if(a==="pedida"){await cambiar(id,{viatico:"pedido"},true);toast("⏳ Marcado: plata pedida")}
+ else if(a==="pagada"){await cambiar(id,{viatico:"recibido"},true);toast("✅ Marcado: plata pagada")}
+ else if(a==="papeles"){const p=partes(t);p.lleva=[...LLEVA];await cambiar(id,{notas:armar(p)},true);toast("🪪 Papeles listos")}
+ else if(a==="viaje")viajeForm(id);
+ else if(a==="fue"){S.prox=id;await cambiar(id,{estado:"fue"})}
+ else if(a==="nofue"){await cambiar(id,{estado:"nofue"},true);toast("Marcado: no fue")}}
 async function toggleLleva(tid,x,abierto){const t=get(tid);if(!t)return;const p=partes(t);
  p.lleva=p.lleva.includes(x)?p.lleva.filter(y=>y!==x):LLEVA.filter(y=>y===x||p.lleva.includes(y));
  await cambiar(tid,{notas:armar(p)},!abierto)}
 
-function form(t){const e=t||{viatico:"sin"};const pe=partes(e);let repSel="";
+function form(t){const e=t||{viatico:"sin"};const pe=partes(e);let repSel="";let medSel=pe.medio||"";
+ const top=(k,n)=>{const c={};for(const x of S.list){const v=String(x[k]||"").trim();if(v)c[v]=(c[v]||0)+1}return Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,n).map(x=>x[0])};
+ const qk=(id,arr)=>arr.length?`<div class="qk">${arr.map(v=>`<button type="button" data-qk="${id}" data-val="${esc(v)}">${esc(v)}</button>`).join("")}</div>`:"";
  abrir(`<h2>${t?"Cambiar turno":"Anotar turno"}</h2><p class="sub">Lo que es obligatorio: interno y fecha.</p>
  <form id="fm">
  <label class="f"><span>Interno</span><input id="f_interno" list="dl-int" value="${esc(e.interno)}" placeholder="Escribí y elegí de la lista" autocomplete="off" required><small style="display:block;color:var(--mut);font-size:12px;margin-top:4px">${S.internos.length} internos, tomados de la app de Internos. Si es uno nuevo, escribilo igual.</small></label>
  <div class="row"><label class="f"><span>Fecha</span><input type="date" id="f_fecha" value="${esc(e.fecha)}" required></label><label class="f"><span>Hora</span><input type="time" id="f_hora" value="${esc(e.hora)}"></label></div>
  <label class="f"><span>Dónde (ciudad / policlínica)</span><input id="f_lugar" list="dl-lug" value="${esc(e.lugar)}" placeholder="Ej: Ciudad del Plata"></label>
+ ${qk("f_lugar",top("lugar",4))}
  <label class="f"><span>Médico o especialidad (opcional)</span><input id="f_esp" value="${esc(e.especialidad)}" placeholder="Ej: psiquiatra, dentista…"></label>
- <label class="f"><span>Quién lo lleva (opcional)</span><input id="f_acomp" value="${esc(e.acompana)}" placeholder="Ej: Nico"></label>
+ ${qk("f_esp",top("especialidad",4))}
+ <div class="lbl">Viaje</div>
+ <label class="f"><span>Quién lo lleva</span><input id="f_acomp" value="${esc(e.acompana)}" placeholder="Ej: Nico"></label>
+ ${qk("f_acomp",top("acompana",4))}
+ <div class="btns" id="f_med" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">${MEDIOS.map(m=>`<button type="button" class="b${medSel===m?" sel":""}" data-m="${m}">${ICMED[m]} ${m[0].toUpperCase()+m.slice(1)}</button>`).join("")}</div>
+ <label class="f"><span>Sale a las (opcional)</span><input type="time" id="f_sale" value="${esc(pe.sale)}"></label>
  <div class="lbl">Viáticos</div>
  <div class="row"><label class="f"><span>Plata a pedir a la familia</span><input id="f_monto" inputmode="numeric" value="${esc(e.monto)}" placeholder="$ lo que se necesita"></label><label class="f"><span>Teléfono de la familia</span><input id="f_tel" inputmode="tel" value="${esc(e.telefono)}" placeholder="09…"></label></div>
  <label class="f"><span>Familiar con quien se habló</span><input id="f_fam" value="${esc(e.familia)}" placeholder="Ej: María (madre)"></label>
@@ -296,12 +372,14 @@ function form(t){const e=t||{viatico:"sin"};const pe=partes(e);let repSel="";
  <div class="btns"><button type="button" class="b" data-act="${t?"volver":"cerrar"}">Cancelar</button><button class="b p" type="submit">Guardar</button></div>
  </form>`);
  $("sh").dataset.id=t?t.id:"";
+ $("f_med").addEventListener("click",ev=>{const b=ev.target.closest("[data-m]");if(!b)return;medSel=medSel===b.dataset.m?"":b.dataset.m;$("f_med").querySelectorAll(".b").forEach(x=>x.classList.toggle("sel",x.dataset.m===medSel))});
+ $("fm").addEventListener("click",ev=>{const b=ev.target.closest("[data-qk]");if(!b)return;$(b.dataset.qk).value=b.dataset.val});
  if(!t)$("f_rep").addEventListener("click",ev=>{const b=ev.target.closest("[data-r]");if(!b)return;repSel=b.dataset.r;$("f_rep").querySelectorAll(".b").forEach(x=>x.classList.toggle("sel",x===b))});
  $("f_interno").addEventListener("change",()=>{if(t)return;const v=$("f_interno").value.trim().toLowerCase();const prev=[...S.list].reverse().find(x=>(x.interno||"").toLowerCase()===v);
   if(prev){if(!$("f_fam").value)$("f_fam").value=prev.familia||"";if(!$("f_tel").value)$("f_tel").value=prev.telefono||""}});
  $("fm").addEventListener("submit",async ev=>{ev.preventDefault();
   const body={interno:$("f_interno").value.trim(),fecha:$("f_fecha").value,hora:$("f_hora").value,lugar:$("f_lugar").value.trim(),especialidad:$("f_esp").value.trim(),acompana:$("f_acomp").value.trim(),
-   monto:$("f_monto").value.replace(/\D/g,""),telefono:$("f_tel").value.trim(),familia:$("f_fam").value.trim(),notas:armar({rep:t?pe.rep:repSel,lleva:pe.lleva,libre:$("f_notas").value.trim()}),
+   monto:$("f_monto").value.replace(/\D/g,""),telefono:$("f_tel").value.trim(),familia:$("f_fam").value.trim(),notas:armar({rep:t?pe.rep:repSel,lleva:pe.lleva,libre:$("f_notas").value.trim(),medio:medSel,sale:$("f_sale").value}),
    viatico:$("f_nov").checked?"no":(e.viatico==="no"?"sin":e.viatico||"sin"),estado:e.estado||"pendiente",creado:e.creado||new Date().toISOString()};
   if(!body.interno||!body.fecha){toast("Falta el interno o la fecha");return}
   const id=await guardar(t?t.id:null,body);
@@ -324,7 +402,7 @@ async function cargar(silencioso){
   if(!r.ok){if(/contraseña|acceso/i.test(r.error||"")){salir();$("lerr").textContent=r.error}else nota(r.error);return}
   S.list=r.turnos||[];S.rol=r.rol;if(Array.isArray(r.internos)){S.internos=r.internos;ls.set("med_int",r.internos)}
   nota("");render();
-  const id=$("sh").dataset.id;if($("sheet").classList.contains("on")&&id&&!document.getElementById("fm")){if(get(id))detalle(id);else cerrar()}
+  const id=$("sh").dataset.id;if($("sheet").classList.contains("on")&&id&&!$("sh").querySelector("input,textarea")&&!$("pasetx")){if(get(id))detalle(id);else cerrar()}
  }catch(e){if(!silencioso)nota("No se pudo conectar. Revisá internet y tocá ⟳ para reintentar.")}
  finally{cargando=false}}
 async function guardar(id,body){
@@ -355,8 +433,9 @@ $("lform").addEventListener("submit",async ev=>{ev.preventDefault();
  finally{b.disabled=false;b.textContent="Entrar"}});
 
 document.addEventListener("click",ev=>{
- const el=ev.target.closest("[data-hvia],[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id],#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
+ const el=ev.target.closest("[data-tarea],[data-hvia],[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id]:not(#sh),#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
  if(el.closest("#fm")&&!el.dataset.act)return;
+ if(el.dataset.tarea){hacerTarea(el.dataset.tarea,el.dataset.tid);return}
  if(el.dataset.hvia){cambiar(el.dataset.tid,{viatico:el.dataset.hvia},true);toast({sin:"💸 Falta pedir la plata",pedido:"⏳ Marcado: ya se pidió",recibido:"✅ Marcado: ya la pagaron"}[el.dataset.hvia]);return}
  if(el.dataset.lleva){toggleLleva(el.dataset.tid,el.dataset.lleva,$("sheet").classList.contains("on"));return}
  if(el.dataset.v){S.vista=el.dataset.v;S.dia=null;if(el.dataset.v!=="int")S.intSel=null;cerrar();render();window.scrollTo(0,0);return}
@@ -374,7 +453,7 @@ document.addEventListener("click",ev=>{
  if(el.dataset.est){S.prox=el.dataset.est==="fue"?id:null;cambiar(id,{estado:el.dataset.est});return}
  const a=el.dataset.act;
  if(a==="cerrar")cerrar();
- else if(a==="volver")detalle(id);
+ else if(a==="volver"){$("sh").onclick=null;detalle(id)}
  else if(a==="editar")form(get(id));
  else if(a==="borrar"){el.outerHTML=`<button class="b red" data-act="borrarsi">¿Seguro? Tocá para borrar</button>`}
  else if(a==="borrarsi")borrar(id);
@@ -382,6 +461,10 @@ document.addEventListener("click",ev=>{
  else if(a==="recargar"){toast("Actualizando…");cargar()}
  else if(a==="avisos")panelAvisos();
  else if(a==="noprox"){S.prox=null;detalle(id)}
+ else if(a==="viaje")viajeForm(id);
+ else if(a==="vguardar")guardarViaje(id);
+ else if(a==="pase")pase();
+ else if(a==="copiarpase"){try{navigator.clipboard.writeText(textoPase()).then(()=>toast("Copiado. Pegalo en WhatsApp."),()=>toast("Mantené apretado el texto para copiarlo"))}catch(e){toast("Mantené apretado el texto para copiarlo")}}
  else if(a==="siprox")guardarProx(id);
  else if(a==="verint"){const t=get(id);cerrar();S.vista="int";S.intSel=t?t.interno:null;render();window.scrollTo(0,0)}
  else if(a==="activar")activarAvisos();
