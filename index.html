@@ -65,6 +65,9 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 .hero small{color:var(--acc);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.hero h4{margin:3px 0 2px;font:700 20px Fraunces,serif}.hero p{margin:0;color:#e4dacb;font-size:14px}
 .chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.chk button{font:inherit;font-size:12.5px;padding:5px 10px;border-radius:99px;background:#0006;border:1px solid var(--line);color:var(--mut);cursor:pointer}.chk button.ok{border-color:var(--ok);color:var(--ok)}
 .chip.rep{color:#d4b5e8;border-color:#4a3a55}
+.pfs button.pf{background:var(--card2);border:2px solid transparent;border-radius:11px;padding:7px 8px;text-align:left;color:var(--ink);font:inherit;cursor:pointer}
+.pfs button.pf b{font:700 18px Fraunces,serif;display:block;color:var(--c)}.pfs button.pf span{font-size:11.5px;color:var(--mut)}
+.pfs button.pf.on{border-color:var(--c);background:var(--soft)}
 .solover [data-tarea],.solover [data-via],.solover [data-est],.solover [data-act="editar"],.solover [data-act="viaje"],.solover [data-act="borrar"],.solover .prox,.solover .adm,.solover #nuevo{display:none!important}
 .solover [data-lleva]{pointer-events:none}.modo{display:none;font-size:12px;color:var(--blue);margin-top:2px}.solover .modo{display:block}
 .tar{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 12px 6px;margin-bottom:12px}
@@ -278,17 +281,21 @@ function vPlata(){
  const conV=todosV.filter(t=>dias(t.fecha)<=30),masAde=todosV.length-conV.length;
  const suma=a=>a.reduce((x,t)=>x+(Number(t.monto)||0),0);
  const sin=conV.filter(t=>t.viatico==="sin"),ped=conV.filter(t=>t.viatico==="pedido"),rec=conV.filter(t=>t.viatico==="recibido");
- const nombres=[...new Set(conV.map(t=>t.interno))].sort((a,b)=>a.localeCompare(b,"es"));
- const card=n=>{const ts=conV.filter(t=>t.interno===n).sort(ord);const fam=[...S.list].reverse().find(t=>t.interno===n&&(t.familia||t.telefono))||{};
+ const F=S.pfiltro||"",NOMF={sin:"💸 Falta pedir",pedido:"⏳ Esperando la plata",recibido:"✅ Ya pagaron"};
+ const vis=F?conV.filter(t=>t.viatico===F):conV;
+ const nombres=[...new Set(vis.map(t=>t.interno))].sort((a,b)=>a.localeCompare(b,"es"));
+ const card=n=>{const ts=vis.filter(t=>t.interno===n).sort(ord);const fam=[...S.list].reverse().find(t=>t.interno===n&&(t.familia||t.telefono))||{};
   const r=suma(ts.filter(t=>t.viatico==="recibido")),p=suma(ts.filter(t=>t.viatico==="pedido")),f=suma(ts.filter(t=>t.viatico==="sin"));
   return `<div class="ficha"><h3>${esc(n)}</h3><p>${fam.familia?"Familiar: "+esc(fam.familia):"Sin familiar anotado"}${fam.telefono?" · "+esc(fam.telefono):""}</p>
-  <div class="cuenta">${ts.map(t=>`<span class="r" data-id="${esc(t.id)}">${esc(fLarga(t))} · ${esc(t.especialidad||"Médico")} <small style="color:var(--mut)">${{sin:"falta pedir",pedido:"pedido",recibido:"recibido"}[t.viatico]||""}</small></span><b class="r" data-id="${esc(t.id)}">${t.monto?plata(t.monto):"sin monto"}</b>`).join("")}
-  <span class="tot" style="color:var(--ok)">Recibido</span><b class="tot" style="color:var(--ok)">${plata(r)||"$ 0"}</b>
-  ${p?`<span style="color:var(--blue)">Pedido, falta que llegue</span><b style="color:var(--blue)">${plata(p)}</b>`:""}
-  ${f?`<span style="color:var(--acc)">Falta pedir</span><b style="color:var(--acc)">${plata(f)}</b>`:""}</div></div>`};
- return `<div class="kpi" style="margin-top:0"><div><b style="color:var(--acc)">${plata(suma(sin))||"$ 0"}</b><span>falta pedir (${sin.length})</span></div><div><b style="color:var(--blue)">${plata(suma(ped))||"$ 0"}</b><span>esperando (${ped.length})</span></div><div><b style="color:var(--ok)">${plata(suma(rec))||"$ 0"}</b><span>recibido (${rec.length})</span></div></div>
- <p class="sub" style="color:var(--mut);font-size:13px;margin:8px 2px 10px">Cuentas de los médicos de los próximos 30 días, con la plata que se le pide a la familia en cada turno.${masAde?` Hay ${masAde} turno${masAde===1?"":"s"} más adelante.`:""} Tocá un turno para cambiar cómo están los viáticos.</p>
- ${nombres.length?nombres.map(card).join(""):`<div class="vacio">No hay viáticos pendientes.</div>`}`}
+  <div class="cuenta">${ts.map(t=>`<span class="r" data-id="${esc(t.id)}">${esc(fLarga(t))} · ${esc(t.especialidad||"Médico")} <small style="color:var(--mut)">${{sin:"falta pedir",pedido:"pedida",recibido:"pagada"}[t.viatico]||""}</small></span><b class="r" data-id="${esc(t.id)}">${t.monto?plata(t.monto):"sin monto"}</b>`).join("")}
+  ${r?`<span class="tot" style="color:var(--ok)">Ya pagaron</span><b class="tot" style="color:var(--ok)">${plata(r)}</b>`:""}
+  ${p?`<span class="${r?"":"tot"}" style="color:var(--blue)">Pedida, falta que llegue</span><b class="${r?"":"tot"}" style="color:var(--blue)">${plata(p)}</b>`:""}
+  ${f?`<span class="${r||p?"":"tot"}" style="color:var(--acc)">Falta pedir</span><b class="${r||p?"":"tot"}" style="color:var(--acc)">${plata(f)}</b>`:""}</div></div>`};
+ const caja=(k,lista,col,txt)=>`<button class="pf${F===k?" on":""}" data-pf="${k}" style="--c:${col}"><b>${plata(suma(lista))||"$ 0"}</b><span>${txt} (${lista.length})</span></button>`;
+ return `<div class="kpi pfs" style="margin-top:0">${caja("sin",sin,"var(--acc)","falta pedir")}${caja("pedido",ped,"var(--blue)","esperando")}${caja("recibido",rec,"var(--ok)","ya pagaron")}</div>
+ ${F?`<div class="filtro" style="margin:8px 2px 0"><span>Mostrando: ${NOMF[F]}</span><button data-pf="">Ver todos</button></div>`:""}
+ <p class="sub" style="color:var(--mut);font-size:13px;margin:8px 2px 10px">Tocá un cuadro de arriba para ver solo esos. Son los médicos de los próximos 30 días.${masAde?` Hay ${masAde} turno${masAde===1?"":"s"} más adelante.`:""} Tocá un turno para ver su ficha.</p>
+ ${nombres.length?nombres.map(card).join(""):`<div class="vacio">${F?"No hay ninguno en "+NOMF[F].toLowerCase()+".":"No hay viáticos pendientes."}</div>`}`}
 
 function abrir(h){$("sh").innerHTML=h;$("sheet").classList.add("on");$("sh").scrollTop=0}
 function cerrar(){$("sheet").classList.remove("on");S.prox=null;$("sh").onclick=null}
@@ -478,8 +485,9 @@ $("lform").addEventListener("submit",async ev=>{ev.preventDefault();
  finally{b.disabled=false;if($("lsetup").hidden)b.textContent="Ingresar"}});
 
 document.addEventListener("click",ev=>{
- const el=ev.target.closest("[data-tarea],[data-hvia],[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id]:not(#sh),#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
+ const el=ev.target.closest("[data-pf],[data-tarea],[data-hvia],[data-lleva],[data-v],[data-dia],[data-cdia],[data-mes],[data-int],[data-tab],[data-f],#qf,[data-id]:not(#sh),#nuevo,[data-act],[data-via],[data-est]");if(el&&el.closest("#login"))return;if(!el)return;
  if(el.closest("#fm")&&!el.dataset.act)return;
+ if(el.dataset.pf!==undefined){S.pfiltro=S.pfiltro===el.dataset.pf?"":el.dataset.pf;render();window.scrollTo(0,0);return}
  const modifica=el.dataset.tarea||el.dataset.lleva||el.dataset.via||el.dataset.est||el.id==="nuevo"||["editar","viaje","vguardar","borrar","borrarsi","siprox"].includes(el.dataset.act);
  if(modifica&&S.rol!=="Admin"){toast("Solo los administradores pueden cambiar cosas");return}
  if(el.dataset.tarea){hacerTarea(el.dataset.tarea,el.dataset.tid);return}
