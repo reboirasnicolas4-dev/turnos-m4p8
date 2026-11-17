@@ -65,7 +65,8 @@ body{background:var(--bg);color:var(--ink);font:15px/1.4 "Hanken Grotesk",system
 .hero small{color:var(--acc);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.hero h4{margin:3px 0 2px;font:700 20px Fraunces,serif}.hero p{margin:0;color:#e4dacb;font-size:14px}
 .chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.chk button{font:inherit;font-size:12.5px;padding:5px 10px;border-radius:99px;background:#0006;border:1px solid var(--line);color:var(--mut);cursor:pointer}.chk button.ok{border-color:var(--ok);color:var(--ok)}
 .chip.rep{color:#d4b5e8;border-color:#4a3a55}
-.hplata{margin-top:11px;padding-top:10px;border-top:1px solid #ffffff1a}.hpt{font-weight:700;font-size:14px;margin-bottom:7px}.hpt .hfam{color:var(--mut);font-weight:500}.hpno{color:var(--mut);font-size:13.5px}
+.hplata{margin-top:11px;padding-top:10px;border-top:1px solid #ffffff1a}.hpt{font-weight:700;font-size:14px;margin-bottom:7px}.hpt .hfam{color:var(--mut);font-weight:500}
+.hdat{margin-top:6px;display:grid;gap:4px;font-size:14px;color:#e4dacb}.hdat .chip{font-size:11.5px}.hnot{white-space:pre-wrap;background:#0004;border-radius:10px;padding:6px 9px}.hpno{color:var(--mut);font-size:13.5px}
 .hpb{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.hpb button{font:600 12.5px inherit;padding:8px 4px;border-radius:11px;background:#0006;border:1px solid var(--line);color:var(--mut);cursor:pointer}
 .hpb button.on.sin{background:#4a3210;border-color:var(--acc);color:var(--acc)}.hpb button.on.pedido{background:#1e2a40;border-color:var(--blue);color:var(--blue)}.hpb button.on.recibido{background:#1c3324;border-color:var(--ok);color:var(--ok)}
 .mesh{display:flex;align-items:center;gap:8px;margin-bottom:10px}.mesh h2{flex:1;margin:0;font:700 22px Fraunces,serif;text-align:center}
@@ -172,9 +173,15 @@ function vHoy(){
  const prox=pend.filter(t=>dias(t.fecha)>=0).sort(ord)[0];
  if(prox){const p=partes(prox),n=dias(prox.fecha);
   $("hero").innerHTML=`<div class="hero" data-id="${esc(prox.id)}"><small>Próximo médico · ${rel(n)||fLarga(prox)}${prox.hora?" "+esc(prox.hora):""}</small><h4>${esc(prox.interno)}</h4>
-  <p>📍 ${esc(prox.lugar||"sin lugar")}${prox.especialidad?" · "+esc(prox.especialidad):""}${prox.acompana?" · lo lleva "+esc(prox.acompana):""}</p>
+  <div class="hdat"><div>📅 ${esc(fLarga(prox))}${prox.hora?" · "+esc(prox.hora):""}${p.rep?` <span class="chip rep">🔁 ${esc(p.rep)}</span>`:""}</div>
+  <div>📍 ${esc(prox.lugar||"sin lugar")}</div>
+  ${prox.especialidad?`<div>🩺 ${esc(prox.especialidad)}</div>`:""}
+  <div>🧑‍🤝‍🧑 ${prox.acompana?"Lo lleva "+esc(prox.acompana):"<span style='color:var(--acc)'>Falta decidir quién lo lleva</span>"}</div>
+  ${prox.familia||prox.telefono?`<div>👪 ${esc(prox.familia||"Familiar")}${prox.telefono?" · "+esc(prox.telefono):""}</div>`:""}
+  ${p.libre?`<div class="hnot">📝 ${esc(p.libre)}</div>`:""}
+  ${!esta(prox.interno)?`<div><span class="chip nofue">Ya no está en la comunidad</span></div>`:""}</div>
   <div class="chk">${LLEVA.map(x=>{const ok=p.lleva.includes(x);return `<button class="${ok?"ok":""}" data-lleva="${x}" data-tid="${esc(prox.id)}">${ok?"✔":"○"} ${x}</button>`}).join("")}</div>
-  <div class="hplata"><div class="hpt">💵 Plata${prox.monto&&prox.viatico!=="no"?" · "+plata(prox.monto):""}${prox.familia&&prox.viatico!=="no"?` <span class="hfam">· ${esc(prox.familia)}</span>`:""}</div>
+  <div class="hplata"><div class="hpt">💵 Plata${prox.monto&&prox.viatico!=="no"?" · "+plata(prox.monto):(prox.viatico!=="no"?' <span class="hfam">· sin monto</span>':"")}</div>
   ${prox.viatico==="no"?`<div class="hpno">No precisa viáticos</div>`:`<div class="hpb">${[["sin","💸 Falta pedir"],["pedido","⏳ Ya se pidió"],["recibido","✅ Ya la pagaron"]].map(([v,l])=>`<button class="${v}${prox.viatico===v?" on":""}" data-hvia="${v}" data-tid="${esc(prox.id)}">${l}</button>`).join("")}</div>`}</div></div>`}
  else $("hero").innerHTML="";
  const u=pend.filter(urg).sort(ord);
