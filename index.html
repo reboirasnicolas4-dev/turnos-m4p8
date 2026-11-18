@@ -225,6 +225,14 @@ function iso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"
 function sumar(f,rep,k){const d=pf(f);if(rep==="cada semana")d.setDate(d.getDate()+7*k);else if(rep==="cada 15 días")d.setDate(d.getDate()+14*k);
  else{const dia=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+k);const ult=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();d.setDate(Math.min(dia,ult))}return iso(d)}
 const ord=(a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora);
+/* Orden de los internos: por fecha de ingreso (el que más tiempo lleva en la casa, primero). Las fechas vienen de la app de Internos. */
+const kN=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim();
+let ING=ls.get("med_ing")||{};
+const ordIng=(a,b)=>(ING[kN(a)]||"9999").localeCompare(ING[kN(b)]||"9999")||String(a).localeCompare(String(b),"es");
+async function cargarIngresos(){if(!cred||cargarIngresos.p)return;cargarIngresos.p=1;
+ try{const r=await postInt({email:cred.correo,token:cred.token,action:"getInternos"});
+  if(Array.isArray(r)){const m={};r.forEach(o=>{if(o&&o.nombre&&o.ingreso)m[kN(o.nombre)]=String(o.ingreso).slice(0,10)});
+   if(JSON.stringify(m)!==JSON.stringify(ING)){ING=m;ls.set("med_ing",m);render()}}}catch(e){}finally{cargarIngresos.p=0}}
 function tarjeta(t,conDia){const n=dias(t.fecha),d=pf(t.fecha),p=partes(t);
  return `<div class="t${urg(t)?" urg":""}${t.estado==="pendiente"&&n<0?" viejo":""}" data-id="${esc(t.id)}">
     <div class="d"><small>${d?DIAS[d.getDay()].slice(0,3):""}</small><b>${d?d.getDate():"?"}</b><small>${d?MES[d.getMonth()]:""}</small></div>
@@ -242,7 +250,7 @@ function render(){
  $("v-hoy").hidden=S.vista!=="hoy";$("v-otra").hidden=S.vista==="hoy";
  if(cred)$("nuevo").hidden=S.vista==="plata";
  if(S.vista==="hoy")vHoy();else $("v-otra").innerHTML={cal:vCal,int:vInt,plata:vPlata}[S.vista]();
- const ints=[...new Set([...S.internos,...S.list.map(t=>t.interno)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es")),lugs=[...new Set(["Ciudad del Plata","San José de Mayo","Montevideo","Libertad",...S.list.map(t=>t.lugar).filter(Boolean)])];
+ const ints=[...new Set([...S.internos,...S.list.map(t=>t.interno)].filter(Boolean))].sort(ordIng),lugs=[...new Set(["Ciudad del Plata","San José de Mayo","Montevideo","Libertad",...S.list.map(t=>t.lugar).filter(Boolean)])];
  $("dl-int").innerHTML=ints.map(x=>`<option value="${esc(x)}">`).join("");$("dl-lug").innerHTML=lugs.map(x=>`<option value="${esc(x)}">`).join("");
 }
 function vHoy(){
@@ -293,7 +301,7 @@ function vInt(){
  const nombres=[...new Set(S.list.map(t=>t.interno).filter(Boolean))];
  if(!S.intSel||!nombres.includes(S.intSel)){S.intSel=null;
   const filas=nombres.map(n=>{const ts=S.list.filter(t=>t.interno===n);const pr=ts.filter(t=>t.estado==="pendiente"&&dias(t.fecha)>=0).sort(ord)[0];return{n,ts,pr}})
-   .sort((a,b)=>(a.pr?a.pr.fecha:"9999").localeCompare(b.pr?b.pr.fecha:"9999")||a.n.localeCompare(b.n,"es"));
+   .sort((a,b)=>ordIng(a.n,b.n));
   return `<div class="grp" style="margin-top:0">Internos con médicos anotados</div>`+(filas.length?filas.map(f=>`<div class="t" data-int="${esc(f.n)}"><div class="i"><div class="n">${esc(f.n)}</div><div class="s">${f.ts.length} turno${f.ts.length===1?"":"s"}${f.pr?" · próximo "+fLarga(f.pr):" · sin próximos"}</div></div><span style="color:var(--mut)">›</span></div>`).join(""):`<div class="vacio">Todavía no hay turnos anotados.</div>`)}
  const ts=S.list.filter(t=>t.interno===S.intSel);
  const fut=ts.filter(t=>t.estado==="pendiente").sort(ord),pas=ts.filter(t=>t.estado!=="pendiente").sort(ord).reverse();
@@ -310,7 +318,7 @@ function vPlata(){
  const sin=conV.filter(t=>t.viatico==="sin"),ped=conV.filter(t=>t.viatico==="pedido"),rec=conV.filter(t=>t.viatico==="recibido");
  const F=S.pfiltro||"",NOMF={sin:"💸 Falta pedir",pedido:"⏳ Esperando la plata",recibido:"✅ Ya pagaron"};
  const vis=F?conV.filter(t=>t.viatico===F):conV;
- const nombres=[...new Set(vis.map(t=>t.interno))].sort((a,b)=>a.localeCompare(b,"es"));
+ const nombres=[...new Set(vis.map(t=>t.interno))].sort(ordIng);
  const card=n=>{const ts=vis.filter(t=>t.interno===n).sort(ord);const fam=[...S.list].reverse().find(t=>t.interno===n&&(t.familia||t.telefono))||{};
   const r=suma(ts.filter(t=>t.viatico==="recibido")),p=suma(ts.filter(t=>t.viatico==="pedido")),f=suma(ts.filter(t=>t.viatico==="sin"));
   return `<div class="ficha"><h3>${esc(n)}</h3><p>${fam.familia?"Familiar: "+esc(fam.familia):"Sin familiar anotado"}${fam.telefono?" · "+esc(fam.telefono):""}</p>
@@ -465,7 +473,7 @@ async function cargar(silencioso){
  if(!cred||cargando)return;cargando=true;
  try{const r=await api("listar");
   if(!r.ok){if(r.auth===false||/contraseña|acceso|sesión/i.test(r.error||"")){salir(true);$("lerr").textContent=r.error||"Tu sesión venció. Ingresá de nuevo con tu contraseña."}else nota(r.error);return}
-  S.list=r.turnos||[];S.rol=r.rol;ls.set("med_cache",{c:cred.correo,rol:r.rol,list:S.list});revisarSol();if(Array.isArray(r.internos)){S.internos=r.internos;ls.set("med_int",r.internos)}
+  S.list=r.turnos||[];S.rol=r.rol;ls.set("med_cache",{c:cred.correo,rol:r.rol,list:S.list});cargarIngresos();revisarSol();if(Array.isArray(r.internos)){S.internos=r.internos;ls.set("med_int",r.internos)}
   nota("");render();
   const id=$("sh").dataset.id;if($("sheet").classList.contains("on")&&id&&!$("sh").querySelector("input,textarea")&&!$("pasetx")){if(get(id))detalle(id);else cerrar()}
  }catch(e){if(!silencioso)nota("No se pudo conectar. Revisá internet y tocá ⟳ para reintentar.")}
