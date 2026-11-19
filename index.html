@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="es"><head><meta charset="utf-8"><script src="bloqueo.js?v=2"></script><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Médicos · Alas de Libertad</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -503,14 +503,16 @@ function usarCopia(rol){const k=ls.get("med_cache");if(!k||!cred||k.c!==cred.cor
 function pantallaLogin(on){$("login").hidden=!on;document.querySelector(".app").hidden=on;$("nuevo").hidden=on;$("nav").hidden=on}
 function salir(vencida){const c=cred;cred=null;borrarSesion();S.list=[];if(!vencida)ls.del("med_cache");
  try{const t=ls.get("med_tok");if(t&&c&&!vencida){api0("desregistrar",{ptok:t,correo:c.correo,token:c.token}).catch(()=>{});ls.del("med_tok")}}catch(e){}
- if(c&&c.token&&!vencida)postInt({email:c.correo,token:c.token,action:"logout"}).catch(()=>{});
+ if(c&&c.token&&!vencida){postInt({email:c.correo,token:c.token,action:"logout"}).catch(()=>{});try{AlasBloqueo.olvidar()}catch(x){}}
  $("lclave").value="";modoSetup(false);pantallaLogin(true)}
 function modoSetup(on,codigo){$("lsetup").hidden=!on;$("pwrow").hidden=on;$("coderow").hidden=!(on&&codigo);if(!on)$("ncode").value="";
  $("ltxt").textContent=on?(codigo?"Escribí el código que te pasaron y elegí tu contraseña nueva.":"Es tu primera vez: elegí una contraseña para tu usuario."):"Ingresá tu correo y tu contraseña.";
  $("lbtn").textContent=on?"Crear contraseña e ingresar":"Ingresar"}
 async function entrarCon(correo,token,rec){cred={correo,token};const r=await api("login");
  if(!r.ok){cred=null;return r.error||"No se pudo ingresar."}
- guardarSesion(rec);S.rol=r.rol;pantallaLogin(false);usarCopia(r.rol);cargar();return ""}
+ guardarSesion(rec);S.rol=r.rol;pantallaLogin(false);usarCopia(r.rol);cargar();setTimeout(()=>{try{AlasBloqueo.despuesDeEntrar()}catch(x){}},1500);return ""}
+/* Bloqueo con PIN y huella (el mismo que Internos, Despensa y Bitácora; se configura en Internos → Seguridad) */
+try{AlasBloqueo.logueado=()=>!!cred;AlasBloqueo.salir=()=>salir(false);AlasBloqueo.alDesbloquear=()=>{if(cred)cargar(true)}}catch(x){}
 $("lcorreo").addEventListener("input",()=>{if(!$("lsetup").hidden)modoSetup(false)});
 $("lform").addEventListener("submit",async ev=>{ev.preventDefault();
  const correo=$("lcorreo").value.trim().toLowerCase(),setup=!$("lsetup").hidden,rec=$("rec").checked;$("lerr").textContent="";
@@ -686,7 +688,7 @@ async function apagarAvisos(){const tok=ls.get("med_tok");
 try{if(avisosPosibles()&&Notification.permission==="granted"){fbMsg().onMessage(p=>{const n=p.notification||{};navigator.serviceWorker.ready.then(r=>r.showNotification(n.title||"Médicos",{body:n.body||"",icon:"icon-192.png",badge:"badge-96.png",tag:"fg"}))})}}catch(e){}
 </script><script>
 /* Actualización automática: si hay una versión nueva publicada, la app se recarga sola (sin cerrar sesión) */
-const APP_VER="20261119223923";
+const APP_VER="20261119224235";
 async function buscarVersion(){if(!location.protocol.startsWith("http")||document.visibilityState!=="visible")return;
   const ae=document.activeElement;if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
   try{const v=(await fetch("version.txt?x="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.text():"")).trim();
