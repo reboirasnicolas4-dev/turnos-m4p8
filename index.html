@@ -141,7 +141,7 @@ body.instalada #instbar,body.instalada .linst{display:none!important}
   <button type="button" class="b" id="pvolver" style="width:100%;margin-top:10px">‹ Volver a Ingresar</button>
  </div></div>
 <div class="app">
- <div class="top"><div class="logo"></div><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small><span class="modo">👁 Modo solo mirar</span></div><button class="ic" data-act="pase" title="Pase de guardia">📋</button><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
+ <div class="top"><a class="logo" href="https://reboirasnicolas4-dev.github.io/registro-k7x2/?inicio=1" onclick="irInicio()" aria-label="Volver al inicio" title="Volver al inicio" style="display:block"></a><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small><span class="modo">👁 Modo solo mirar</span></div><button class="ic" data-act="pase" title="Pase de guardia">📋</button><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
  <div id="nota" class="nota" hidden></div>
  <div id="v-hoy">
  <div class="inst" id="instbar" hidden><div style="font-size:26px">📲</div><div class="tx"><b>Instalá la app en este aparato</b>Queda con su ícono, como WhatsApp.</div><button data-act="instalar">Instalar</button></div>
@@ -174,6 +174,7 @@ const S={list:[],tab:"prox",filtro:null,q:"",internos:[],rol:"",vista:"hoy",dia:
 // ⬇⬇ PEGÁ ACÁ ENTRE LAS COMILLAS LA URL DE TU APPS SCRIPT (termina en /exec) ⬇⬇
 const API="https://script.google.com/macros/s/AKfycbzYithfRv1aTYL1CrPeYHpAcq7XccGY3Gm7Bvlb56aCn65ZlT-FS7a6ePZ7-OumAz5LRw/exec";
 const esta=n=>!S.internos.length||S.internos.some(x=>x.toLowerCase()===(n||"").toLowerCase());
+function irInicio(){try{if(cred&&cred.token)sessionStorage.setItem("alas-paso",JSON.stringify({email:cred.correo,token:cred.token,t:Date.now()}))}catch(x){}}
 let cred=null,cargando=false;
 // Usuarios y contraseñas: los mismos de la app de Internos (misma sesión en este dispositivo)
 const INT_API="https://script.google.com/macros/s/AKfycbzYLuWCtvRv-sQobVzwXxUhTbjfhDuul9raoOD4RbxFOkBVaPI5FLEOU4TI5z3pQl9_/exec";
