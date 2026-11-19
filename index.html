@@ -681,4 +681,14 @@ async function apagarAvisos(){const tok=ls.get("med_tok");
  try{if(tok)await api("desregistrar",{ptok:tok});const m=fbMsg();if(m)await m.deleteToken().catch(()=>{})}catch(e){}
  ls.del("med_tok");toast("Avisos apagados en este aparato");revisarAvBar();panelAvisos()}
 try{if(avisosPosibles()&&Notification.permission==="granted"){fbMsg().onMessage(p=>{const n=p.notification||{};navigator.serviceWorker.ready.then(r=>r.showNotification(n.title||"Médicos",{body:n.body||"",icon:"icon-192.png",badge:"badge-96.png",tag:"fg"}))})}}catch(e){}
-</script></body></html>
+</script><script>
+/* Actualización automática: si hay una versión nueva publicada, la app se recarga sola (sin cerrar sesión) */
+const APP_VER="20261119203221";
+async function buscarVersion(){if(!location.protocol.startsWith("http")||document.visibilityState!=="visible")return;
+  const ae=document.activeElement;if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
+  try{const v=(await fetch("version.txt?x="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.text():"")).trim();
+    if(v&&v!==APP_VER&&sessionStorage.getItem("med-recarga")!==v){sessionStorage.setItem("med-recarga",v);try{irInicio()}catch(e){}
+      const u=new URL(location.href);u.searchParams.set("v",v);location.replace(u.toString())}}catch(e){}}
+buscarVersion();document.addEventListener("visibilitychange",buscarVersion);setInterval(buscarVersion,600000);
+</script>
+</body></html>
