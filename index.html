@@ -113,7 +113,8 @@ body.instalada #instbar,body.instalada .linst{display:none!important}
 .app{padding-bottom:170px}.fab{bottom:78px}.toast{bottom:150px}
 </style>
 <link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#16120e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Médicos"></head><body>
+<meta name="theme-color" content="#16120e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Médicos"><script src="https://reboirasnicolas4-dev.github.io/registro-k7x2/inicio.js?v=5" data-app="medicos"></script>
+</head><body>
 <div id="login" class="login" hidden><div class="logo" style="width:64px;height:64px;margin:0 auto 14px"></div>
  <h1>Médicos</h1><p>Alas de Libertad · turnos y viáticos</p>
  <p id="ltxt" style="color:var(--mut);margin:-12px 0 16px">Ingresá tu correo y tu contraseña.</p>
@@ -141,7 +142,7 @@ body.instalada #instbar,body.instalada .linst{display:none!important}
   <button type="button" class="b" id="pvolver" style="width:100%;margin-top:10px">‹ Volver a Ingresar</button>
  </div></div>
 <div class="app">
- <div class="top"><a class="logo" href="https://reboirasnicolas4-dev.github.io/registro-k7x2/?inicio=1" onclick="irInicio()" aria-label="Volver al inicio" title="Volver al inicio" style="display:block"></a><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small><span class="modo">👁 Modo solo mirar</span></div><button class="ic" data-act="pase" title="Pase de guardia">📋</button><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
+ <div class="top"><a class="logo" href="https://reboirasnicolas4-dev.github.io/registro-k7x2/?inicio=1" onclick="if(window.AlasInicio){AlasInicio.abrir();return false}irInicio()" aria-label="Volver al inicio" title="Volver al inicio" style="display:block"></a><div style="flex:1"><h1>Médicos</h1><small>Alas de Libertad · turnos y viáticos</small><span class="modo">👁 Modo solo mirar</span></div><button class="ic" data-act="pase" title="Pase de guardia">📋</button><button class="ic" data-act="avisos" title="Avisos">🔔</button><button class="ic" data-act="recargar" title="Actualizar">⟳</button><button class="ic" data-act="salir" title="Salir">Salir</button></div>
  <div id="nota" class="nota" hidden></div>
  <div id="v-hoy">
  <div class="inst" id="instbar" hidden><div style="font-size:26px">📲</div><div class="tx"><b>Instalá la app en este aparato</b>Queda con su ícono, como WhatsApp.</div><button data-act="instalar">Instalar</button></div>
@@ -683,7 +684,7 @@ async function apagarAvisos(){const tok=ls.get("med_tok");
 try{if(avisosPosibles()&&Notification.permission==="granted"){fbMsg().onMessage(p=>{const n=p.notification||{};navigator.serviceWorker.ready.then(r=>r.showNotification(n.title||"Médicos",{body:n.body||"",icon:"icon-192.png",badge:"badge-96.png",tag:"fg"}))})}}catch(e){}
 </script><script>
 /* Actualización automática: si hay una versión nueva publicada, la app se recarga sola (sin cerrar sesión) */
-const APP_VER="20261119203221";
+const APP_VER="20261119204637";
 async function buscarVersion(){if(!location.protocol.startsWith("http")||document.visibilityState!=="visible")return;
   const ae=document.activeElement;if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
   try{const v=(await fetch("version.txt?x="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.text():"")).trim();
