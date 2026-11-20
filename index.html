@@ -685,10 +685,22 @@ async function probarAviso(){const tok=ls.get("med_tok");if(!tok)return;
 async function apagarAvisos(){const tok=ls.get("med_tok");
  try{if(tok)await api("desregistrar",{ptok:tok});const m=fbMsg();if(m)await m.deleteToken().catch(()=>{})}catch(e){}
  ls.del("med_tok");toast("Avisos apagados en este aparato");revisarAvBar();panelAvisos()}
+/* Si los avisos están activados, el aparato se vuelve a anotar solo una vez por día (si la anotación se perdió, se arregla sola) */
+async function renovarAviso(){
+ try{if(renovarAviso.p||!ls.get("med_tok")||!avisosPosibles()||Notification.permission!=="granted")return;
+  if(typeof cred!=="object"||!cred||!cred.token)return;
+  if(Date.now()-Number(ls.get("med_tokref")||0)<20*3600*1000)return;renovarAviso.p=1;
+  const reg=await navigator.serviceWorker.register("sw.js");await navigator.serviceWorker.ready;
+  const tok=await fbMsg().getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});if(!tok)return;
+  const r=await api("registrar",{ptok:tok,disp:navigator.userAgent.slice(0,120)});
+  if(r&&r.ok){ls.set("med_tok",tok);ls.set("med_tokref",String(Date.now()))}}
+ catch(e){}finally{renovarAviso.p=0}}
+setTimeout(renovarAviso,6000);setInterval(renovarAviso,600000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")setTimeout(renovarAviso,3000)});
 try{if(avisosPosibles()&&Notification.permission==="granted"){fbMsg().onMessage(p=>{const n=p.notification||{};navigator.serviceWorker.ready.then(r=>r.showNotification(n.title||"Médicos",{body:n.body||"",icon:"icon-192.png",badge:"badge-96.png",tag:"fg"}))})}}catch(e){}
 </script><script>
 /* Actualización automática: si hay una versión nueva publicada, la app se recarga sola (sin cerrar sesión) */
-const APP_VER="20261120170500";
+const APP_VER="20261120212500";
 async function buscarVersion(){if(!location.protocol.startsWith("http")||document.visibilityState!=="visible")return;
   const ae=document.activeElement;if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
   try{const v=(await fetch("version.txt?x="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.text():"")).trim();
